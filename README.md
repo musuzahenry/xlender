@@ -16,7 +16,7 @@ Installation Part 1
 6. Add users and eployees
 7. Navigate to Custom user rights and give your self rights, but dont add the same right twice
 8. Navigate to Loan Types and enter loan types namely: i. Daily loans, ii. Monthly loans
-9. Navigate to System Custom Settings and add the following
+9. Navigate to System Custom Settings and add the following carefully
 	1. Settings Name =defaulter_grace_period, User Friendly Name= Defaulter Grace Period, Value =3, Allow = True
 	2. Settings Name =defaulter_interest, User Friendly Name= Defaulter's Interest(%100), Value =30, Allow = True
 	3. Settings Name =records_in_borrowers_book, User Friendly Name= How many records can the borrowers book take?, Value =61, Allow = True
