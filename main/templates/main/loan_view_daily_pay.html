@@ -1,0 +1,56 @@
+
+{% load humanize %}
+
+{% if request.session.current_loanID %}
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>Date</th>
+            <th>Balance</th>
+            <th>Debt</th>
+        </tr>
+
+    {% for daily_pay in daily_pay_backs %}
+
+    <tr style="padding:0px; margin: 0px;">
+        <td class="{{daily_pay.bg_color}} {{daily_pay.text_color}}" >
+        
+            <span style="cursor: pointer;"
+            data-target="#daily-pa-tab-{{daily_pay.id}}" data-toggle="collapse">
+                {{daily_pay.expected_pay_date | date:'M d, Y' }}:
+            <i class="fa fa-bars"></i></span>
+                
+            <form method="post"  action="{% url 'main:pay-daily' %}" class="row" style="padding: 0px; margin: 0px;">
+                {% csrf_token %}
+                <div class="collapse" id="daily-pa-tab-{{daily_pay.id}}">
+                    <h4 class="{{daily_pay.text_color}}">{{daily_pay.total_day_debt  | intcomma }}</h4>
+
+                <input type="hidden" name="pay-daily" value="pay-daily">
+                <input type="hidden" value="{{daily_pay.id}}" name="pay-id">
+                <label clas="col-md-6"style="background:white; color:black; 
+                font-weight:bold; font-size:11px;height:30px; ">Pay Method</label>
+                    <select style="border: 1px solid #5bc0de;" clas="col-md-6" 
+                    style="border:#5bc0de;" name="pay-method-id"  required>  
+                {% for pay_methodID in get_global_db_objects.pay_methods %}
+                    <option value="{{pay_methodID.id}}">{{pay_methodID.pay_method_name}}</option>          
+                {% endfor %}
+                </select>
+                <input  clas="col-md-1"type="text"  name="pay-medium" placeholder="Pay Medium"> 
+                <input clas="col-md-1"type="text" name="pay-identification" placeholder="Pay indenfication">
+                
+                <input clas="col-md-1" type="number" name="amount-paid" 
+                value="{{daily_pay.total_day_balance}}">
+               
+                <input style="margin-top:4px; padding: 5px; cursor: pointer;"
+                 clas="col-md-1" type="submit" value="Pay">
+                </div>
+            </form>
+
+        </td>
+        <td>{{daily_pay.total_day_balance | intcomma }}</td>
+        <td>{{daily_pay.total_day_debt | intcomma }}</td>
+    </tr>
+{% endfor %}
+
+
+</table>
+{% endif %}

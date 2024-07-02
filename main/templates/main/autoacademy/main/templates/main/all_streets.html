@@ -1,0 +1,53 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+
+<div class="row"> <!-- Spans Client and Loans--> 
+
+{% if user.is_authenticated %}
+
+
+<div class="col-12" >
+
+
+    <h1>All Streets</h1>
+
+
+    <table class="table table-striped table-striped table-bordered">
+        <thead class="bg-dark text-white">
+            <tr>   
+                <td>No#</td>
+                <td>Street Name</td>
+                <td>Address</td>
+ 
+            </tr>
+        </thead>
+        <tbody>
+       {% for street in all_streets %}
+            <tr>   
+                <td>{{street.id}}</td>
+                <td>{{street.street_name}}</td>
+                <td>{{street.address}}</td>                
+            </tr>
+        {% endfor %}
+
+        </tbody>
+        <tfoot class="bg-dark text-white">
+            <tr>   
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+
+    </table>
+</div>
+
+
+{% endif %}
+</div><!--closes this page top row div-->
+{% endblock %}

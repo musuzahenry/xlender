@@ -1,0 +1,81 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+
+{% if user.is_authenticated %}
+
+<div class="row">
+
+<div class="col-12 col-md-4"></div>
+
+    <h1 class="col-sm-12">Loan Settings</h1>
+        
+    {% for message in messages %}
+        <p class="bg-success text-white" style="width:100% !important; text-align: center;">
+        {{message}}
+        </p>
+    {% endfor %}
+
+
+    <table class="table table-striped table-bordered">
+        <thead class="bg-info text-white">
+            <tr>
+                <td>Station Name</td> 
+                <td>Interest(Daily Loans)</td>          
+                <td>Interest(Monthly Loans)</td>
+                <td>Defaulter Interest(Daily Loans)</td> 
+                <td>Defaulter Interest(Monthly Loans)</td> 
+                <td>Save</td>  
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for station in stations %}
+            <form action="" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="station-id" value="{{station.id}}"> 
+            <tr>
+                <td>
+                       {{station.station_name}} 
+                </td> 
+                <td> 
+                    <input type="number" name="daily-interest" value="{{station.daily_percent | floatformat:0 }}"> 
+                </td> 
+                <td>
+                    <input type="number" name="monthly-interest" value="{{station.monthly_percent| floatformat:0 }}"> 
+                </td>
+                <td>
+                    <input type="number" name="daily-defaulters-interest" value="{{station.defaulters_percent| floatformat:0 }}"> 
+                </td> 
+
+                <td>
+                    <input type="number" name="monthly-defaulters-interest" value="{{station.monthly_defaulters_percent| floatformat:0 }}"> 
+                </td>
+
+                <td><button type="submit" class="btn btn-info btn-sm text-white">Save</button></td>
+            </tr>
+        </form>
+            {% endfor %}
+        </tbody>
+
+        <tfoot  class="bg-dark text-white">
+            <tr>
+                <td></td> 
+                <td></td> 
+                <td></td> 
+                <td></td> 
+                <td></td> 
+            </tr>
+        </tfoot>
+
+    </table>
+    
+</div>
+
+
+{% endif %}
+{% endblock %}

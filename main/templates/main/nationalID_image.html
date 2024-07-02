@@ -1,0 +1,153 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+{% load humanize %}
+
+
+{% block content %}
+
+
+
+<style>
+    .not-visible{display: none;}
+</style>
+
+
+
+<div class="row" style="margin-top: 10px;">
+
+    <p class="col-12"><a class="btn btn-info btn-sm text-white"href="{% url 'main:edit-client' %}" >Back</a> {{client.full_name}}</p>
+<h1 class="col-12"> Set NationalID Image</h1>
+
+
+    <div class="row" style="position: relative;"><div id="alert-box"></div></div>
+    
+    <div class="row">
+        <div class="col-12 col-md-6">
+        <div id="image-box"></div>
+        </div>
+    </div>
+     
+    <br>
+
+    <form method="POST" action="" class="upload-frms col-12" id="upload-form" enctype="multipart/form-data">  
+        {% csrf_token %}  
+     {{form}}
+    </form>
+    
+
+    <div class="col-12">
+    <div id="progress-box" class="not-visible">progress</div>
+    
+    <div id="cancel-box" class="not-visible">      
+        <button id="cancel-btn" class="btn btn-danger text-white">Cancel</button>
+    </div>
+    </div>
+
+
+</div>
+
+
+
+<style>
+.upload-frms label{display: none;}
+.upload-frms [type=checkbox]{display: none;}
+</style>
+
+<script> 
+ 
+   const uploadForm = document.getElementById("upload-form") 
+   const input = document.getElementById("id_client_national_id")
+   const alertBox = document.getElementById("alert-box")
+   const imageBox = document.getElementById("image-box")
+   const progressBox = document.getElementById("progress-box")
+   const cancelBox = document.getElementById("cancel-box")
+   const cancelBtn = document.getElementById("cancel-btn")
+   const csrf = document.getElementsByName("csrfmiddlewaretoken")
+
+
+   input.click(function(){
+    input=null
+   })
+
+   input.addEventListener('change',()=>{
+    progressBox.classList.remove("not-visible")
+    cancelBox.classList.remove("not-visible")
+
+    //getting image data from input file
+    const image_data = input.files[0]
+    const url = URL.createObjectURL(image_data)
+
+    const fd = new FormData()
+    fd.append("csrfmiddlewaretoken", csrf[0].value)
+    fd.append("client_national_id", image_data)
+    
+
+    $.ajax({
+        
+        type: "POST",
+        url:uploadForm.action, 
+        enctype:"multipart/form-data",
+        data:fd,
+        beforeSend: function(){
+
+        },
+        xhr: function(){
+          
+          const xhr = new window.XMLHttpRequest();
+          
+    
+          xhr.upload.addEventListener('progress',
+          e=>{
+            
+            if(e.lengthComputable){
+                    const percent = (e.loaded / e.total) *100
+                    console.log(percent)
+                    progressBox.innerHTML = `
+                    <div class="col-12">
+                       <div class="progress" role="progressbar" aria-label="Example with label"
+                        aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar" style="width:${percent}%"></div>
+                       </div>
+                    </div>  
+                   <p style="font-size:30px !important; font-weight:bold; color:green;"><i>${Math.trunc(percent)}%</i></p>`                 
+            }
+          })
+
+          cancelBtn.addEventListener("click", ()=>{
+             xhr.abort()
+             progressBox.innerHTML=""
+             cancelBox.classList.add("not-visible")
+          })
+          return xhr
+        },
+        success: function(response){
+            console.log(response)
+            imageBox.innerHTML =`<div class="col-12">
+                <img style="width:300px;" src=${url}>
+                </div> `       
+        },
+        error: function(error){
+           // console.log(error)
+        },
+        cache: false,
+        contentType: false,
+        processData:false
+
+    })
+
+ 
+   })
+   
+
+   </script>
+
+
+<!--Close block content-->
+{% endblock %}
+
+
+
+
+
+

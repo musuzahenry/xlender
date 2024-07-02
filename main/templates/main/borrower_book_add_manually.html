@@ -1,0 +1,48 @@
+
+
+<!--
+Thie template is password protected from the change_password view in users_views.py module
+-->
+
+{% extends "main/base.html" %}
+{% block content %}
+
+<div class="row">
+
+<h1 clas="col-12"><a class="btn-success text-white btn btn-sm" href="{% url 'main:index' %}">
+    <i class="fa fa-arrow-left"></i>Back</a>&nbsp;
+    Add borrower's book</h1>
+<p class="col-12"> <span><strong>{{request.session.current_clientID}}:</strong></span> 
+<span>{{request.session.current_client_fullname}}</span> </p>
+
+<p class="col-12 bg-danger text-white" style="text-align: center;">
+    The client will be required to make this payment
+</p>
+
+
+<form class="col-12" method="POST" action="{% url 'main:manually-add-book' %}">
+    {% csrf_token %}
+    <input type="hidden" name="add-book-manual" value="add-book-manual">
+    
+    <label class="col-12" for="pay-methodID">Pay Method</label>                  
+    <select class="col-12"  name="pay-method-id" id="pay-methodID" required>  
+    {% for pay_methodID in get_global_db_objects.pay_methods %}
+        <option value="{{pay_methodID.id}}">{{pay_methodID.pay_method_name}}</option>          
+    {% endfor %}
+    </select> 
+
+    <label class="col-12" for="pay-medium">Pay Medium</label>
+    <input class="col-12" type="text"  name="pay-medium">
+
+    <label class="col-12" for="pay-identification">Pay Identification</label>
+    <input class="col-12" type="text" name="pay-identification">
+
+    <label class="col-12" for="amount">Book Fee</label>
+    <input class="col-12" type="number" name="amount" value="{{book_fee}}" disabled>
+
+    <button style="margin-top: 3px;" type="submit" class="btn btn-info btn-sm">Add Book</button>
+</form>
+
+</div>
+
+{% endblock %}

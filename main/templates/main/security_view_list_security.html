@@ -1,0 +1,60 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<!-- Open block content-->
+
+
+<div class="row">
+    <div class="col-12"> 
+        <div class="row">
+            <h1 class="col-12">SECURITY LIST</h1>
+            <div class="col-12">
+            <p>
+                <a class="btn-success text-white btn btn-sm" href="{% url 'main:edit-loan' %}"><i class="fa fa-arrow-left"></i>Back</a>&nbsp;
+                <a class="btn-danger text-white btn btn-sm" href="{% url 'main:add-security' %}"><i class="fa fa-plus"></i>Add New</a>
+            </p>
+            </div>
+            </div>
+        </div>
+
+    <h2 style="padding-top: 3px;"class="col-12 col-md-4">Client Name: {{ request.session.current_client_fullname}}</h2>
+    <h3 style="padding-top: 3px;"class="col-12 col-md-4">Record Date: {{request.session.loan_record_date}}</h3>
+    <h3 style="padding-top: 3px;"class="col-12 col-md-4">LoanID: {{request.session.current_loanID}}</h3>
+
+    <div class="col-12">
+        <div class="row">
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th> Name</th><th>Estimated Value</th>
+                </tr>
+                
+            {% for security in security_list %}
+            <tr>
+                <td>
+                    <a href="{% url 'main:edit-security' %}/{{security.id}}">
+                    {{security.security_name}}
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'main:edit-security' %}/{{security.id}}">
+                    {{security.estimated_value}}
+                    </a>
+                </td>
+            </tr>
+           
+            {% endfor %}
+            
+            </table>
+        </div>
+
+    </div>
+
+
+ </div>
+
+<!--Close block content-->
+{% endblock %}
+

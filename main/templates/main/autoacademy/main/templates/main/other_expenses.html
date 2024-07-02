@@ -1,0 +1,141 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+
+<div class="row"> <!-- Spans Client and Loans--> 
+
+{% if user.is_authenticated %}
+
+
+<div class="col-12" >
+
+
+</div>
+
+
+<div class="col-12" >
+
+
+    <h1>View Expense</h1>
+    
+    <p data-bs-target="#other-incomes" data-bs-toggle="collapse" style="cursor: pointer;">
+        Add Expense&nbsp; <i class="fa fa-arrow-down btn btn-sm btn-primary text-white"></i> </p>
+
+    <div id = "other-incomes" class="collapse">
+        <form action="" method="POST" style="border:1px solid rgb(87, 223, 228); border-radius:8px;
+        padding: 8px;">
+            {% csrf_token %}
+            <input type="hidden" name="add-other-income" value="add-other-income">
+            <select name="category-name" id="category-name">
+                <option value="NA">Choose Item Category</option>
+                {% for category in all_expense_categories %}
+                <option value="{{category.item_category_name}}">{{category.user_friendly_name}}</option>
+                {% endfor %}
+            </select>
+             <input type="text" name="particulars" id="particulars" placeholder="Desciption">
+             <input type="text" name="amount" id="amount" placeholder="amount">
+            <button style="margin-top: 2px;"type="submit" class="btn btn-primary btn-sm"
+            style="font-size: 12px !important;">Submit</button>
+            </form>
+        </form>
+
+    </div>
+
+    {% for message in messages %}
+    <p class="bg-danger text-white" style="text-align: center;">{{message}}</p>
+    {% endfor %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <label for="street-id">Street</label>
+        <select name="category-name">
+            <option value="NA">Choose Item Category</option>
+            {% for category in all_expense_categories %}
+            <option value="{{category.item_category_name}}">{{category.user_friendly_name}}</option>
+            {% endfor %}
+        </select><br/>
+        <label for="date1">From: </label>
+        <input type="date" name="date1" placeholder ="From" required>
+        <label for="date2">To: </label>
+        <input type="date" name="date2" placeholder="To" required>
+        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+    </form>
+
+    <p>
+        {% if orig_date1 %} 
+           From <b><i>{{orig_date1}}</i></b> 
+        {% endif %} 
+        {% if orig_date2 %} 
+           To <b><i>{{orig_date2}}</i></b> 
+        {% else %}
+        Today's Report
+        {% endif %}
+
+        {{ist_of_stickers}}
+    </p>
+
+    <p>
+        <button class="export-to-excel btn btn-primary btn-sm">Export ToExcel</button>
+    </p>
+
+    <table class="table table-striped table-striped table-bordered" id="tab-export">
+        <thead class="bg-dark text-white">
+            <tr>   
+                <td>No#</td>
+                <td>Record Date</td>
+                <td>Particulars</td>
+                <td>Amount</td>
+                <td>Recording User</td>
+                <td>Office</td>
+            </tr>
+        </thead>
+        <tbody>
+       {% for sticker in list_of_other_expenses %}
+            <tr>   
+                <td>{{sticker.id}}</td>
+                <td>{{sticker.record_date}}</td>
+                <td>{{sticker.particulars}}</td>
+                <td style='text-align: right;'>
+                    {{sticker.exp_amount | floatformat:0 | intcomma }}</td>
+                <td>{{sticker.user_full_name}}</td>
+                <td>{{sticker.streetID}}</td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+        <tfoot class="bg-dark text-white">
+            <tr>   
+                <td>Count: {{count}}</td>
+                <td></td>
+                <td style='text-align: right;' colspan="2"> Total: {{total | floatformat:0 | intcomma}} </td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+
+    </table>
+</div>
+
+
+{% endif %}
+</div><!--closes this page top row div-->
+
+
+<script>
+    $(".export-to-excel").click(function(){
+       $("td").find("input").remove("input")
+       $("td").find("label").remove("label")
+       $("td").find("i").remove("i")
+       $("#tab-export").table2excel({  
+    exclude: "",
+    name: "Worksheet Name",
+    filename: "OtherExpenses.xls", // do include extension
+    preserveColors: true // set to true if you want background colors and font colors preserved
+})
+
+});
+</script>
+{% endblock %}

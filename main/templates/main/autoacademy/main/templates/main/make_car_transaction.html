@@ -1,0 +1,32 @@
+
+
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+<div class="row"> <!-- Spans Client and Loans--> 
+
+
+{% if user.is_authenticated %}
+
+<div class="col-12">
+    {% include "main/search_form.html"  %}
+</div>
+
+<div class="col-12">
+   
+    <!-- The markup below is for adding a transctions and listing the transactions of a given user that day-->
+       <!--- Source code for paying -->
+     {% include "main/list_index_transactions.html" with current_car_paid_history=current_car_paid_history last_added_invoice=last_added_invoice  cash_book=cash_book added_fines=added_fines  %}
+   
+    </div>
+{% endif %}
+
+
+</div>
+
+
+{% endblock %}

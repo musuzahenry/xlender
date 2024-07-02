@@ -1,0 +1,107 @@
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+<div class="row"> <!-- Spans Client and Loans--> 
+    
+    <div class="row tab-content" style="margin-top: 5px;">
+      <div class="col-12" id="payments">
+   {% for message in messages %}
+   <p class="bg-info text-white" style="text-align: center;">{{message}}</p>
+   {% endfor %}   
+        {% if car_search_valid_stickers %}
+        <h1>Valid Stickers</h1>
+        <table class="table table-striped table-bordered">
+            <thead class="bg-dark text-white">
+            <tr>
+                <td>No#</td>
+                <td>Record Date</td>
+                <td>Expiry Date</td>
+                <td>Particulars</td>
+                <td>Amount Paid</td>
+                <td>Registering Officer</td>
+            </tr>
+            </thead>
+             
+            <tbody>
+                
+                
+                {% for sticker in car_search_valid_stickers %}  
+                
+                <tr>
+                    <td> <a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{ sticker.id }}</a></td>
+                    <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{ sticker.record_date }}</a></td>
+                    <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{ sticker.expiry_date }}</a></td>
+                    <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{ sticker.particulars }}</a></td>
+                    <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{ sticker.amount | floatformat:0 | intcomma }}</a></td>
+                    <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{ sticker.user_full_name }}</a></td>
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+            <tfoot class="bg-dark text-white">
+            <tr>
+                <td></td> <td></td>
+                <td></td>
+                <td></td>
+                <td></td><td></td><td></td>
+            </tr>
+            </tfoot>
+        </table>
+        {% endif %}
+
+
+   
+    {% if car_search_past_stickers %}
+    <h1>Expired Stickers</h1>
+    <table class="table table-striped table-bordered">
+        <thead class="bg-dark text-white">
+        <tr>
+            <td>No#</td>
+            <td>Record Date</td>
+            <td>Expiry Date</td>
+            <td>Particulars</td>
+            <td>Amount Paid</td>
+            <td>Registering Officer</td>
+        </tr>
+        </thead>
+         
+        <tbody>
+            
+            {% for sticker in car_search_past_stickers %}
+            
+            <tr style="background: rgb(255, 232, 99);">
+                <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{ sticker.id }}</a></td>
+                <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{ sticker.record_date }}</a></td>
+                <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{ sticker.expiry_date }}</a></td>
+                <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{ sticker.particulars }}</a></td>
+                <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{ sticker.amount | intcomma }}</a></td>
+                <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{ sticker.user_full_name }}</a></td>
+            </tr>
+            {% endfor %}
+            
+        </tbody>
+        <tfoot class="bg-dark text-white">
+        <tr>
+            <td></td> <td></td>
+            <td></td>
+            <td></td>
+            <td></td><td></td>
+        </tr>
+        </tfoot>
+    </table>
+    {% endif %}
+  
+</div><!--closes inner wrapping row-->
+
+</div><!--closes outer most div col-12-->
+
+</div><!--closes this page top row div-->
+
+{% endif %}
+
+{% endblock %}

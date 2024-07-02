@@ -1,0 +1,74 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+
+<div class="row"> <!-- Spans Client and Loans--> 
+
+{% if user.is_authenticated %}
+
+{% for message in messages %}
+<p style="text-align: center; color:white;" class="bg-{{message.level_tag}}">{{message}} </p>
+{% endfor %}
+
+
+<div class="col-12" >
+
+    <h1>Rights For {{group}}</h1>
+   
+    <table class="table table-striped">
+        <thead class="bg-dark text-white"><tr><td>GroupID</td><td>Group Name</td></tr></thead>
+    
+        <tbody>
+    {% for item in list_group_rights %}
+       <tr>
+        <td>
+        <form action="" method="POST" style="display: inline-block; padding: 0px !important; margin: 0px !important;">
+            {% csrf_token %}
+            <input type="hidden" name="del-rightID" value="{{item.id}}">
+            <button class="btn btn-danger btn-sm">Delete</button>
+        </form>
+       </td>     
+        <td>
+            {{item.rightID}}
+        </td>
+    </tr>
+    {% endfor %}
+      </tbody>
+      <tfoot class="bg-dark text-white">
+        <tr><td></td><td></td></tr></tfoot>
+    </table>
+
+
+
+    <h1>Assign Rights</h1>
+    <table class="table table-striped">
+        <thead class="bg-dark text-white"><tr><td>RightID</td><td>Right Name</td></tr></thead>
+    
+        <tbody>
+        {% for right in list_rights %}
+        <tr style="padding: 0px !important;"><td>
+            {{right.id}}
+        </td><td>
+            <form action="" method="POST" style="display: inline-block; padding: 0px !important; margin: 0px !important;">
+                {% csrf_token %}
+                <input type="hidden" name="add-rightID" value="{{right.id}}">
+                <button class="btn btn-primary btn-sm">Add</button>
+            </form>
+            {{right.right_user_friendly_name }}
+        </td>
+    
+       </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot class="bg-dark text-white"><tr><td></td><td></td></tr></tfoot>
+    </table>
+
+</div>
+
+{%  endif %}
+</div>
+{% endblock %}

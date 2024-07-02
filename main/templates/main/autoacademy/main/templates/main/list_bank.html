@@ -1,0 +1,120 @@
+
+{% extends 'main/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+<div class="row">
+
+
+    <div class="col-md-1 col-12">
+    <p style="margin-bottom: 0px;">:::::</p>
+    <p  style="margin-bottom: 0px; margin-top: 10px;">
+        <a class="btn btn-sm btn-primary" href="{% url 'index' %}"><i class="fa fa-arrow-left"></i> Back</a>
+    </p>
+    </div>
+
+    <div class="col-md-11 col-12">
+
+        <form method="POST" action="">
+            {% csrf_token %}
+            <p style="margin-bottom: 0px; margin-top: 10px;" > 
+                <span  style="font-weight: bold; padding: 5px;">Filter By Date:</span>
+            </p>
+            <input type="date" name="date1" placeholder="Enter from date" required />
+            <input type="date" name="date2" placeholder="Enter to date" required /><br />
+            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+        </form>
+
+    </div>
+
+
+    <h2 class="col-12" style="text-align: center;  border-bottom: 1px solid black; padding-bottom: 10px;">
+        Banking
+    </h2>
+
+    <p class="col-12" style="text-align:center;">
+        Running From: <b>{{orig_date1}}</b> To: <b>{{orig_date2}}</b>
+    </p>
+
+    <p style="margin-top: 5px;" class="col-12" data-bs-toggle="collapse" data-bs-target="#correction-form"> 
+        <span style="border:1px solid black; border-radius: 4px; padding: 8px;">
+        <b>Correct Cash At Bank</b> <i class="fa fa-angle-down btn btn-danger btn-sm"></i>
+     </span>
+    </p>
+
+     <div class="col-12 col-md-4 collapse" id="correction-form">
+        <div class="row" >
+        <form method="POST" action="" >
+        <p style="margin-bottom: -2px; text-align: left;"><b>Correct Cash At Bank</b></p>
+          {% csrf_token%}
+          <label class="col-12" for="reason">Give Reason</label>
+          <textarea class="col-12" name="reason"></textarea>
+          <label class="col-12" for="bank-amount">Enter Amount</label>
+          <input class="col-12" type="number" name="bank-amount" required>
+          <button type="submit" class="btn btn-sm btn-primary">Submiit</button>
+        </form>
+        </div>
+    </div>
+    
+    
+
+
+    {% for message in messages %}   
+    <p style="text-align: center; color:white;"   
+        {% if message.level_tag == 'info' %} 
+        class="col-12 bg-success"  
+        {% else %} 
+        class="col-12 bg-danger" 
+        {% endif %} >
+            {{message}}
+        </p>
+    {% endfor %}
+
+    <div class="col-12">
+<table class="table table-bordered table-striped">
+    <thead style="position:sticky; top:0; z-index: 1; background: rgb(24, 54, 94); color:white;">
+
+        <tr>
+            <td>Record Date</td>
+            <td>Particulars</td>
+            <td>Description</td>
+            <td>Debit</td>
+            <td>Credit</td>
+            <td>Balance</td>
+            <td>Recording User</td>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr><td colspan="7" style="text-align: left; font-size: 20px; color:red;">
+            Opening Balance: <i><b>{{opening_balance_set}} {{opening_balance | floatformat:0  | intcomma}}</b></i></td>
+        </tr>
+        {% for cashbook in bank_list %}
+        <tr>
+        <td>{{cashbook.record_date}}</td>
+        <td>{{cashbook.particulars}}</td>
+        <td>{{cashbook.item_name}}</td>
+        <td>{{cashbook.income_received | floatformat:0  | intcomma}}</td>
+        <td>{{cashbook.expense_made | floatformat:0  | intcomma}}</td>
+        <td>{{cashbook.running_total | floatformat:0  | intcomma}}</td>
+        <td>{{cashbook.user_fullname}}</td>
+        </tr>
+        {% endfor %}
+        <tr><td colspan="7" style="text-align: left; font-size: 20px; color:red; ">
+            Closing Balance: <i><b>{{closing_balance_set}} {{closing_balance | floatformat:0  | intcomma}}</b></i></td>
+        </tr>
+    </tbody>
+
+    <tfoot style="background: rgb(24, 54, 94); color:white;">
+        <tr>
+            <td> count: {{count}}</td>
+            <td colspan="6">
+                Total Debit: {{total_debit | floatformat:0  | intcomma }}&nbsp;  Total Credit: {{total_credit | floatformat:0  | intcomma }} 
+                &nbsp; Net Income: {{net | floatformat:0  | intcomma }}
+            </td>
+        </tr>
+    </tfoot>
+</table>
+</div>
+</div>
+{% endblock %}

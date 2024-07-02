@@ -1,0 +1,287 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+{% load humanize %}
+
+
+
+{% block content %}
+<!-- Open block content-->
+
+
+
+
+<div class="row">
+    <h3 style="padding-top: 3px;"class="col-12 col-md-4">
+        <a href="{% url 'main:index' %}" class="btn btn-sm btn-success">
+            <i class="fa fa-arrow-left"></i> Back</a>
+        {{ request.session.current_client_fullname }}
+    </h3>
+    <h3 style="padding-top: 3px;"class="col-12 col-md-8">
+        <span style="color:black;">Edit Loan: </span>{{request.session.current_loanID}}
+        <span style="color:black;">Record Date:</span> {{record_date | date:'M d, Y'}}
+        <a href="{% url 'main:edit-loan' %}/{{request.session.current_loanID}}" class="btn btn-sm btn-danger">X Delete</a>
+    </h3>
+       
+<div class="col-12" style="padding: 0px !important; margin: 0px !important; text-align: center;">
+   <p  class="bg-success text-white">
+    {{warning_message}}</p>
+
+    {% for message in messages %}
+    <p class="bg-danger text-white" style="width:100% !important; text-align: center;">
+    {{message}}
+    </p>
+    {% endfor %}
+</div>
+
+<form  action="edit-loan" class="col-md-8 col-12" method="POST" enctype="multipart/form-data">
+
+<div class="row">
+    {% csrf_token %}
+   <div class="col-md-6">
+
+    <!--Hidden attributes-->
+    <input type="hidden" value="actual-add-loan" name="actual-edit-loan">
+
+            <div class="col-12">
+                
+                <div id="loan-details" >  
+                <div class="row">
+                    <div class="col-12">
+                        <label class="col-12" for="principle">Principle</label>
+                        <input class="col-12" type="text"  name="principle" value="{{principle}}"  id="principle" required>
+                        <label class="col-12" for="interest-rate">Interest(%100)</label>
+                        <input class="col-12" type="number"  name="interest-rate" {{request.session.allow_to_add_custom_loan_interest}}
+                        value="{{interest_percent}}">
+                        <label class="col-12" for="loan-duration">Loan Duration</label>
+                        <input class="col-12" type="number" value="{{loan_duration}}"
+                         name="loan-duration" {{request.session.allow_to_change_loan_duration}}>
+                    
+
+                        <label class="col-12" for="pay-methodID">Pay Method</label>                  
+                            <select class="col-12"  name="pay-method-id" id="pay-methodID" required>  
+                            <option value="{{pay_method_id}}">{{pay_method_name}}</option> 
+                            {% for pay_methodID in get_global_db_objects.pay_methods %}
+                                <option value="{{pay_methodID.id}}">{{pay_methodID.pay_method_name}}</option>          
+                            {% endfor %}
+                        </select> 
+
+                        <label class="col-12" for="loan-typeID">Loan Type</label>
+                        <select class="col-12"  name="loan-typeID" id="loan-typeID">
+                            <option value="{{loan_type_id}}">{{current_loan_type_name}}</option> 
+                            {% for loan_type in get_global_db_objects.loan_types %}
+                                <option value="{{loan_type.id}}">{{loan_type.loan_type_name}}</option>          
+                            {% endfor %}
+                        </select>
+
+                        <label class="col-12" >Station</label>
+                        <select class="col-12"  name="stationID" id="station">
+                            <option value="{{stationID}}">{{loan_station_name}}</option> 
+                            {% for station in get_global_db_objects.stations %}
+                                <option value="{{station.id}}">{{station.station_name}}</option>          
+                            {% endfor %}
+                        </select>
+
+                        <label class="col-12" for="pay-medium">Pay Medium</label>
+                        <input class="col-12" type="text"  name="pay-medium" value="{{pay_medium}}">
+                        <label class="col-12" for="pay-identification">Pay Identification</label>
+                        <input class="col-12" type="text" name="pay-identification" value="{{pay_identification}}">
+  
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        
+        <label class="col-12" for="received-by">Received By</label>
+        <input class="col-12" type="text" name="received-by" value="{{received_by}}">
+        <label class="col-12" for="current-principle">Current Principle</label>
+        <input class="col-12" type="text"  name="current-principlex"
+        value="{{current_principle}}" id="current-principle"  {{request.session.allow_to_add_custom_loan_interest}}>
+        <input class="col-12" type="hidden"  name="current-principle"
+        value="{{current_principle}}" id="current-principle">
+
+        <label class="col-12" for="current-interest">Current Interest</label>
+        <input class="col-12" type="text"  name="current-interest" 
+        value="{{current_interest}}"id="current-interest"  {{request.session.allow_to_add_custom_loan_interest}}>
+ 
+        <label class="col-12 bg-danger" for="current-balance">Current Balance</label>
+        <input style="font-weight:bold;" class="col-12" type="text"  name="current-balance" 
+        value="{{current_balance}}"id="current-balance" disabled>
+
+        <div class="col-12 col-md-12">    
+            <br>
+            <input type="hidden" name="approve-status" value="{{approve_status}}">
+            <input type="hidden" name="disburse-status" value="{{disburse_status}}">
+            <p> <span class="bg-danger" style="color:white;">Approved:</span> <strong>{{approve_status_boolean}}</strong></strong> &nbsp;
+                <span class="bg-danger" style="color:white;">Disbursed:</span> <strong>{{disburse_status_boolean}}</strong></p>
+        </div>
+      
+            <label class="col-12 bg-Success" for="prepared-by-name">Prepared By</label>
+            <input class="col-12" type="text"  name="prepared-by-name" value="{{prepared_by_name}}" disabled>
+
+            <label class="col-12 bg-Success" for="approved-by-name">Approved By</label>
+            <input class="col-12" type="text"  name="approved-by-name" value="{{approved_by_name}}" disabled>
+
+            <label class="col-12 bg-Success" for="disbursing-officer">Disbursed By</label>
+            <input class="col-12" type="text"  name="disbursing-officer" value="{{disbursing_officer}}" disabled>
+
+            <table style="margin-bottom: 8px; margin-top: 8px;">
+                <tr>
+                    <td colspan="2">Allow Automatic Monthly Fines</td>
+                </tr>
+            <tr>
+                <td>
+                    <input type="radio" value="yes" name="count-status" id="bypass" checked>
+                    <span style="font-size: 11px;">Yes</span>
+                 </td>
+                <td>
+               <input type="radio" value="no" name="count-status" id="dont-bypass">
+               <span style="font-size: 11px;">No</span> &nbsp;
+            </td></tr>
+            </table>
+
+
+            <label class="col-12" for="record-date">Edit Record Date</label>
+            <input class="col-12" type="date"  name="record-date"  id="record-date" placeholder="Record Date">
+
+        <input style="padding:7px; width:80px; margin-top:20px;" type="Submit" value="Submit"> 
+    </div>
+
+
+      
+
+    </div>
+
+</form>
+
+
+   
+
+
+<div class="col-md-4 col-12">
+
+    <div class="row">
+
+    <table class="col-6 col-md-6 table" style="text-align: center; overflow: hidden;">
+        <tr>
+        <td style="overflow: hidden;">
+                <a href="{% url 'main:agreement-image' %}">
+                    <button class="btn-danger text-white">Agreement File</button>
+                </a>
+                <a style="font-size: 10px; text-decoration: underline;"
+                target="_blank" href="{% get_media_prefix %}{{loan_agreement_file}}">
+                <h3  style="width:120px !important;">{{loan_agreement_file}}</h3>
+            </a>
+        </td>
+        </tr>
+        <tr>
+        <td style="overflow: hidden; ">
+            <a href="{% url 'main:disburse-iamge' %}">
+                <button class="btn-danger text-white">Disbursement File</button>
+            </a>
+            <a style="font-size: 10px; text-decoration: underline;" 
+            target="_blank" href="{% get_media_prefix %}{{loan_disbursement_file}}"> 
+        <h3 style="width:120px !important;">{{loan_disbursement_file}}</h3>  
+        </a> 
+        </td>
+
+    </tr>
+    <tr>
+        <td>
+            <a  class="bg-info btn btn-sm text-white"
+             href="{% url 'main:list-security' %}">
+            <i class="fa fa-plus"></i> &nbsp;Security
+            </a>
+        </td>
+
+    </tr>
+    <tr>
+        <td>
+        <a class="bg-info btn btn-sm text-white"
+        href="{% url 'main:guarantor-list' %}" 
+        type="submit"> <i class="fa fa-plus"></i> &nbsp;Guarantor
+        </a>
+    </td>
+    </tr>
+    </table>
+                       
+
+
+        <div class="col-12 col-md-12" style="background:rgb(163, 222, 245);">
+            <h3 class="h6">Approve</h3>
+            <form class="form-inline" method="POST" action="edit-loan">
+                {% csrf_token %}
+                <input type="hidden" name="approve-loan" value="approve-loan">
+                <input type="hidden" name="edit-client-rows" value="{{request.session.current_clientID}}">
+                <div style="width:100% !important;">
+                    
+                    <input type="radio" value="no" name="allow-loan-without-book" id="dont-bypass"
+                    {% if not borrower_book_yes %} checked {% endif %}>
+                    <span style="font-size: 11px;">Don't Bypass Borrower's Book</span><br>
+                    <input type="radio" value="yes" name="allow-loan-without-book" id="bypass"
+                    {% if borrower_book_yes %} checked {% endif %}>
+                    <span style="font-size: 11px;"
+                    >Bypass Borrower's Book</span><br>
+                    <input min="0" max="{{request.session.records_in_borrowers_book | add:'0' }}" 
+                    style="margin-bottom: 4px; font-size: 11px;" id="no-of-rows" value="{{borrowersbook}}"
+                    type="number" name="no-of-rows" placeholder ="No of pending rows">
+                    <input style="margin-bottom: 4px; font-size: 11px;" type="text" 
+                    name="adjust-reason" value="Enter Resoan" placeholder="Enter Reason" required>
+                    <br>
+
+
+              
+                </div>
+                <button type="submit" class="bg-danger btn-sm" style="color:white;"> 
+                <i class="fa fa-check"></i> &nbsp;Approve</button>
+            </form>
+        </div>
+
+
+        <div class="col-12 col-md-12" style="background:rgb(255, 218, 218);;">
+            <h3>Disburse</h3>
+            <form  action="{% url 'main:edit-loan' %}" method="POST" enctype="multipart/form-data"
+            class="col-md-12 col-12" >
+            <div class="row">
+                {% csrf_token %}
+                
+                <input type="hidden" name="disburse-loan" value="disburse-loan">
+                
+                <label style="text-align:left !important;" class="col-12" for="processing-feex">
+                Processing Fee</label>
+                <input class="col-12"  type="number" name="processing-feex" value="{{processing_fee}}" disabled>
+                <input type="hidden" name="processing-fee" value="{{processing_fee}}">
+                
+                <label style="text-align:left !important;" class="col-12" for="received-by">
+                Received By</label>
+                <input class="col-12" type="text" name="received-by" value="" style="margin-bottom: 5px;" required>
+                
+                <p class="bg-danger text-white col-12" style="font-size: 12px;">
+                 Prosessing fee will be added automatically after disbursing
+                </p>
+
+                <input class="bg-info btn-sm" type="Submit" value="Disburse"> 
+
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+    
+
+
+
+
+
+<!--Close block content-->
+{% endblock %}
+

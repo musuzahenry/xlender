@@ -1,0 +1,19 @@
+{% load crispy_forms_tags %}
+
+<div class="Login-form-div col-sm-12">
+<h1>Login here</h1>
+    <form class="form card login-form" method="POST">
+        {% csrf_token %}
+             {{ login_form | crispy }}
+             <button style="width:100px;"
+             class="btn btn-primary btn-info" type="submit">Login</button>
+    </form>
+
+    <p>
+        {% for message in messages %}
+        <p class="bg-danger text-white" style="text-align: center;">{{message}}</p>
+        {% endfor %}
+    </p>
+
+</div>
+

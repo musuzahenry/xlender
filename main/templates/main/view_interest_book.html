@@ -1,0 +1,307 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+<!--Anything under block content will be displayed  -->
+{% block content %}
+{% if user.is_authenticated %}
+
+
+<div class="row">
+
+<h1>{{title}}</h1>
+<br>
+
+<p class="col-12">
+<form class="form-inline" method="POST" action="{% url 'main:view-interest-book' %}">
+    {% csrf_token %}
+    <select   name="station-id" id="station">
+        <option  value="0">Choose Station</option>
+        {% for station in get_global_db_objects.stations %}
+            <option value="{{station.id}}">{{station.station_name}}</option>          
+        {% endfor %}
+    </select> &nbsp;
+    <input type="date" name="date1" placeholder="yyyy-mm-dd" required>&nbsp;
+    <input type="date" name="date2" placeholder="yyyy-mm-dd" required>
+    <button class="btn btn-sm btn-info text-white" type="submit">Load</button>
+</form>
+</p>
+<div class="col-12">
+    <div class="row">
+        {% if request.POST.date1 %}
+        <p class="col-12"><b>From:</b> {{request.POST.date1}} <b>To:</b> {{request.POST.date2}} </p>
+        {% else %}
+        <p class="col-12">Today's Report</p>
+        {% endif %}
+
+        <div class="col-12"><button class="export-to-excel btn btn-sm btn-info text-white">Export To Excel</button></div>
+    <table class="table table-striped table-bordered" id="interest-book">
+        <thead class="bg-info text-white">
+            <tr>
+                <td>Record Date</td> <td>Station</td> <td>Particulars</td>          
+                <td>Interest</td> <td>Loan Processing Fee</td> <td>Record Book</td> 
+                <td>Fines</td> <td>Loan Recovered</td> <td>Loan Disbursed</td> 
+                <td>User</td> 
+            </tr>
+        </thead>
+        <tbody>
+            {% for interest in interest_book_set %}
+            <tr>
+                <td>
+                    <form method="POST" class="form-inline loan-list-button" 
+                    action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="set-loan-id" value="{{interest.loanID.id}}">
+                    <button style="background: transparent; border:0px; cursor: pointer;
+                    text-decoration: underline;"type="submit"class="text-info"
+                    style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                     border: 0px transparent; cursor: pointer;">
+                    {{ interest.record_date }}
+                    </button></form>
+
+                    <span id="" data-target="#more-actions" data-toggle="modal" style="cursor: pointer;">
+                         <i class="fa fa-bars bg-info text-white btn-edit" 
+                         style="padding: 8px; cursor: pointer;"></i>
+                        </span>                    
+                </td>
+
+                <td>
+                    <form method="POST" class="form-inline loan-list-button" 
+                    action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="set-loan-id" value="{{interest.loanID.id}}">
+                    <button style="background: transparent; border:0px; cursor: pointer;
+                    text-decoration: underline;"type="submit"class="text-info"
+                    style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                     border: 0px transparent; cursor: pointer;">{{ interest.stationID }}
+                    </button></form> 
+                    </td>
+                <td> 
+                     <form method="POST" class="form-inline loan-list-button" 
+                    action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="set-loan-id" value="{{interest.loanID.id}}">
+                    <button style="background: transparent; border:0px; cursor: pointer;
+                    text-decoration: underline;"type="submit"class="text-info"
+                    style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                     border: 0px transparent; cursor: pointer;">{{ interest.full_name }}
+                    </button></form> 
+                    </td>  
+                <td>
+                    <form method="POST" class="form-inline loan-list-button" 
+                    action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="set-loan-id" value="{{interest.loanID.id}}">
+                    <button style="background: transparent; border:0px; cursor: pointer;
+                    text-decoration: underline;"type="submit"class="text-info"
+                    style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                     border: 0px transparent; cursor: pointer;">{{ interest.interest_paid | intcomma  }} 
+                    </button></form> 
+                    </td> 
+                <td>  
+                 <form method="POST" class="form-inline loan-list-button" 
+                    action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="set-loan-id" value="{{interest.loanID.id}}">
+                    <button style="background: transparent; border:0px; cursor: pointer;
+                    text-decoration: underline;"type="submit"class="text-info"
+                    style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                     border: 0px transparent; cursor: pointer;">{{ interest.processing_fee | intcomma  }} 
+                    </button></form> 
+                    </td> 
+
+                    <td>  
+                        <form method="POST" class="form-inline loan-list-button" 
+                           action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                               {% csrf_token %}
+                               <input type="hidden" name="set-loan-id" value="{{interest.loanID.id}}">
+                           <button style="background: transparent; border:0px; cursor: pointer;
+                           text-decoration: underline;"type="submit"class="text-info"
+                           style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                            border: 0px transparent; cursor: pointer;">{{ interest.borrowers_book | intcomma  }} 
+                           </button></form> 
+                    </td> 
+
+
+                    <td>  
+                        <form method="POST" class="form-inline loan-list-button" 
+                           action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                               {% csrf_token %}
+                               <input type="hidden" name="set-loan-id" value="{{interest.loanID.id}}">
+                           <button style="background: transparent; border:0px; cursor: pointer;
+                           text-decoration: underline;"type="submit"class="text-info"
+                           style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                            border: 0px transparent; cursor: pointer;">{{ interest.fines | intcomma  }} 
+                           </button></form> 
+                    </td> 
+
+                    <td>  
+                        <form method="POST" class="form-inline loan-list-button" 
+                           action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                               {% csrf_token %}
+                               <input type="hidden" name="set-loan-id" value="{{interest.loanID.id}}">
+                           <button style="background: transparent; border:0px; cursor: pointer;
+                           text-decoration: underline;"type="submit"class="text-info"
+                           style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                            border: 0px transparent; cursor: pointer;">{{ interest.loan_recovered | intcomma  }} 
+                           </button></form> 
+                    </td> 
+
+
+                    <td>  
+                        <form method="POST" class="form-inline loan-list-button" 
+                           action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                               {% csrf_token %}
+                               <input type="hidden" name="set-loan-id" value="{{interest.loanID.id}}">
+                           <button style="background: transparent; border:0px; cursor: pointer;
+                           text-decoration: underline;"type="submit"class="text-info"
+                           style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                            border: 0px transparent; cursor: pointer;">{{ interest.loan_disbursed | intcomma }} 
+                           </button></form> 
+                    </td> 
+
+
+                    <td>  
+                        <form method="POST" class="form-inline loan-list-button" 
+                           action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                               {% csrf_token %}
+                               <input type="hidden" name="set-loan-id" value="{{interest.loanID.id}}">
+                           <button style="background: transparent; border:0px; cursor: pointer;
+                           text-decoration: underline;"type="submit"class="text-info"
+                           style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                            border: 0px transparent; cursor: pointer;">{{ interest.userID }} 
+                           </button></form> 
+                    </td> 
+
+            </tr>
+            {% endfor %}
+
+
+        </tbody>
+        <tfoot  class="bg-dark text-white">
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Total Interest: {{ total_iterest_paid | floatformat:0 | intcomma }}</td> 
+                <td>Total Processing Fee: {{ total_processing_fee | floatformat:0 | intcomma }}</td> 
+                <td>Total on Records Book: {{ total_borrowers_book | floatformat:0 | intcomma }}</td> 
+                <td>Total Fines: {{ total_fines_fee | floatformat:0 | intcomma }}</td> 
+                <td>Loan Recovered: {{ total_loan_recovered | floatformat:0 | intcomma }}</td> 
+                <td>Loan Disbursed: {{ total_loan_disbursed | floatformat:0 | intcomma }}</td> 
+                <td></td>
+            </tr>
+        </tfoot>
+
+    </table>
+
+    </div>
+</div>
+
+
+
+
+
+<!--- 
+=================================================================================
+-->
+
+    <div class="modal fade" id="more-actions" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+            
+                <table style="width:100%; margin-right: 20px;"><tr>
+                <td>
+              <h5 class="modal-title" id="exampleModalLabel">
+                Edit Interest Book
+            </h5>
+            </td>
+            <td>
+                <p style="text-align: right;">
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button></p>
+            </td>
+            </tr>
+                </table>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="" class="interest-edit-form">
+                    {% csrf_token %}
+                    <input type="hidden" value="{{interest.id}}" name="interest-id">
+                    <label style="width:100%;">Interest</label>
+                    <input  style="width:100%;" type="number" name="interest-paid" value="{{interest.interest_paid}}" disabled>
+                    <label style="width:100%;">Processing Fee</label>
+                    <input  style="width:100%;" type="number" name="processing-fee" value="{{interest.processing_fee}}">
+                    <label style="width:100%;">Record Book</label>
+                    <input  style="width:100%;" type="number" name="record-book" value="{{interest.borrowers_book}}">
+                    <label style="width:100%;">Fines</label>
+                    <input  style="width:100%;" type="number" name="fines" value="{{interest.fines}}" disabled>
+                    <label style="width:100%;">Loan Disbursed</label>
+                    <input  style="width:100%;" type="number" name="loan-disbursed" value="{{interest.loan_disbursed}}" disabled>
+                    <br>
+                    <input style="margin-top: 3px;" 
+                    type="submit" value="Submit" class="btn btn-sm">
+                </form>
+            </div>
+            <div class="modal-footer">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+</div>
+
+
+
+<script>
+    $(".export-to-excel").click(function(){
+       $("td").find("input").remove("input")
+       $("td").find("label").remove("label")
+       $("td").find("i").remove("i")
+       $("#interest-book").table2excel({  
+    exclude: "",
+    name: "Worksheet Name",
+    filename: "InterestBook.xls", // do include extension
+    preserveColors: true // set to true if you want background colors and font colors preserved
+    })
+    });
+
+    $(document).ready(function(){
+    
+    
+        $(".btn-edit").click(function(){ 
+            /*Editing subject js & */    
+           values = $(this).attr("id").split("-")
+            $("#paper-editID").val(values[0])
+            $("#paper-edit-name").val(values[1])
+        })
+
+
+    
+        $("#paper-edit-submit-btn").click(function(){
+            /* submitting editing form */
+           $("#paper-editing-form").submit()
+        })
+    
+    
+        $(".paper-del-btn").click(function(){
+            /* Deleting form */
+            values = $(this).attr("id").split("-")
+            $("#paper-del-id").val(values[0])
+            $("#paper-del-name").val(values[1])
+        })
+    
+        
+        $("#paper-deleting-submit-btn").click(function(){
+            /* submitting deleting form */
+           $("#paper-deleting-form").submit()
+        })
+    
+    })
+    </script>
+
+{% endif %}
+{% endblock %}

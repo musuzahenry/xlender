@@ -1,0 +1,128 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+
+<div class="row"> <!-- Spans Client and Loans--> 
+
+{% if user.is_authenticated %}
+
+
+<div class="col-12" >
+
+
+</div>
+
+
+<div class="col-12" >
+
+
+    <h1>User Summaries</h1>
+
+    {% for message in messages %}
+    <p class="bg-danger text-white" style="text-align: center;">{{message}}</p>
+    {% endfor %}
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <label for="street-id">Street</label>
+        <select name="street-id">
+            <option value="NA">Choose Street</option>
+            {% for street in all_current_streets %}
+            <option value="{{street.id}}">{{street.street_name}}</option>
+            {% endfor %}
+        </select><br/>
+        <label for="date1">From: </label>
+        <input type="date" name="date1" placeholder ="From" required>
+        <label for="date2">To: </label>
+        <input type="date" name="date2" placeholder="To" required>
+        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+    </form>
+
+    <p>
+        {% if orig_date1 %} 
+           From <b><i>{{orig_date1}}</i></b> 
+        {% endif %} 
+        {% if orig_date2 %} 
+           To <b><i>{{orig_date2}}</i></b> 
+        {% else %}
+        Today's Report
+        {% endif %}
+    </p>
+
+
+    <p>
+        <button class="export-to-excel btn btn-primary btn-sm">Export ToExcel</button>
+    </p>
+
+    <table class="table table-striped table-striped table-bordered" id="tab-export">
+        <thead class="bg-dark text-white">
+            <tr> 
+                <td>No#</td>
+                <td>Record DateDate</td>
+                <td>User</td>
+                <td>Commission</td>
+                <td>Expenses Made</td>
+                <td>Net Collection</td>
+                <td>Total Collection</td>
+                <td>Street</td>
+            </tr>
+        </thead>
+        <tbody>
+       {% for summary in list_of_user_summaries %}
+            <tr>
+                <td>{{summary.id}}</td>   
+                <td>{{summary.record_date | date:"M d, Y"}}</td>
+                <td>{{summary.user_full_name}}</td>
+                <td>{{summary.commision_total | floatformat:0 | intcomma }}</td>
+                <td>{{summary.exp_amount | floatformat:0 | intcomma }}</td>
+                <td>{{summary.net_amount | floatformat:0 | intcomma  }}</td>
+                <td>{{summary.grand_toatl| floatformat:0 | intcomma }}</td> 
+                <td>{{summary.streetID}}</td>                
+            </tr>
+        {% endfor %}
+
+        </tbody>
+        <tfoot class="bg-dark text-white">
+            <tr>   
+                <td>Count: {{count}}</td>
+                <td></td>
+                <td></td>
+                <td>{{commision_total | floatformat:0 | intcomma}}</td>
+                <td>{{exp_total | floatformat:0 | intcomma}}
+                <td>{{net_amount | floatformat:0 | intcomma}}</td>
+                <td>{{grand_toatl | floatformat:0 | intcomma}} </td>
+                <td></td>
+                
+            </tr>
+        </tfoot>
+
+    </table>
+</div>
+
+
+{% endif %}
+</div><!--closes this page top row div-->
+
+
+<script>
+    $(".export-to-excel").click(function(){
+       $("td").find("input").remove("input")
+       $("td").find("label").remove("label")
+       $("td").find("i").remove("i")
+       $("td").find("form").remove("table")
+       $("td").find("button").remove()
+       $("td").find("form").remove()
+       $("#tab-export").table2excel({  
+    exclude: "",
+    name: "Worksheet Name",
+    filename: "UserSummaries.xls", // do include extension
+    preserveColors: true // set to true if you want background colors and font colors preserved
+})
+});
+</script>
+
+{% endblock %}

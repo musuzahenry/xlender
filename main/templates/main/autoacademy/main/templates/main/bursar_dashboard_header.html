@@ -1,0 +1,58 @@
+{% load static %}
+
+
+{% include "main/header.html" %}
+
+
+<div class="row">
+    <h1 class="col-12" 
+    style="font-size: 20px;">BURSAR DASHBOARD</h1>
+</div>
+
+
+<div class="row">
+
+    <div class="col-12 wide-menu">
+        <a class="btn btn-primary btn-sm" href="{% url 'bursar-dashboard' %}"><i class="fa fa-home"></i> Home</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'add-student' %}">Add Student</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'list-classes' %}">Class List</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'list-all-classes' %}">Requiremnts</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'expenses' %}">Manage Expenses</a> 
+        <a class="btn btn-primary btn-sm" href="{% url 'list-cashbook' %}">Cash Book</a> 
+        <a class="btn btn-primary btn-sm" href="{% url 'list-bank' %}">Banking</a> 
+        
+        <!--
+        <a  class="btn btn-primary btn-sm" href=""><i class="fa fa-angle-right"></i> Petty Cash</a>
+        <a  class="btn btn-primary btn-sm" href=""><i class="fa fa-angle-right"></i> Banking</a>
+        -->
+
+        </div>
+
+<p class="col-12 mobile-menu-shower" data-bs-toggle="collapse" data-bs-target="#local-menu">
+    <button class="btn btn-sm btn-primary"><i class="fa fa-bars "></i>MENU</button>
+
+    <div id="local-menu" class="collapse">
+    <div class="col-12 col-md-6 mobile-menux text-white">
+        <ul>
+            <li><a href="{% url 'bursar-dashboard' %}"><i class="fa fa-home"></i> Home</a></li>
+            <li><a href="{% url 'add-student' %}"><i class="fa fa-plus"></i> Add Student</a></li>
+            <li><a href="{% url 'list-classes' %}"><i class="fa fa-pen-nib"></i> Class List</a></li>
+            <li><a href="{% url 'list-all-classes' %}"><i class="fa fa-check"></i> Requiremnts</a></li>
+            <li><a href="{% url 'expenses' %}"><i class="fa fa-yen"></i> Manage Expenses</a></li>
+            <li><a href="{% url 'list-cashbook' %}"><i class="fa fa-home"></i> Cash Book</a></li>
+            <li><a href="{% url 'list-bank' %}"><i class="fa fa-school"></i> Banking</a></li>
+        </ul>
+
+        &nbsp;<a class="btn btn-sm btn-primary" href="" ><span><i class="fa fa-lock "></i></span></a>
+        &nbsp;<a id="logout" href="{% url 'user-logout' %}" class="btn btn-danger btn-sm"><span><i class="fa fa-power-off "></i></span> Logout</a>
+
+    </div>
+    <p style="margin-bottom: -2px;">-------------------------</p>
+
+   </div>
+
+
+</div>
+
+
+

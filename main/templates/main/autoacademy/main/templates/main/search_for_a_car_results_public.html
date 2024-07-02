@@ -1,0 +1,135 @@
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+<div class="row"> <!-- Spans Client and Loans--> 
+
+
+<h1 class="col-12">Today's Payments</h1>
+
+
+<table class="table table-striped table-bordered">
+    <thead class="bg-dark text-white">
+        <tr>
+            <td>Invoice No</td>
+            <td>Record Date</td>
+            <td>Date of Vlaidity</td>
+            <td>Particulars</td>
+            <td>Amount</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% if car_normal_search_today %}
+        {% for car in car_normal_search_today %}
+        <tr>
+            <td>{{car.id}}</td>
+            <td>{{car.record_date}}</td>
+            <td>{{car.date_of_validity}}</td>
+            <td>{{car.particulars}}</td>
+            <td>{{car.inc_amount | floatformat:0 | intcomma}}</td>
+        </tr>
+        {% endfor %}
+   </tbody>
+   {% endif %}
+   <tfoot class="bg-dark text-white">
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+   </tfoot>
+   </table>
+
+
+
+
+
+
+      <h1>Upaid  Invoices</h1>
+      {% if car_normal_search_unpaid %}
+      <table class="table table-striped table-bordered">
+        <thead class="bg-dark text-white">
+            <tr>
+                <td>Invoice No</td>
+                <td>Record Date</td>
+                <td>Date of Vlaidity</td>
+                <td>Particulars</td>
+                <td>Amount</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for car in car_normal_search_unpaid %}
+            <tr style="background: rgb(250,200,200);">
+                <td>{{car.id}}</td>
+                <td>{{car.record_date}}</td>
+                <td>{{car.date_of_validity}}</td>
+                <td>{{car.particulars}}</td>
+                <td>{{car.inc_amount | floatformat:0 | intcomma}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot class="bg-dark text-white">
+            <tr>
+                <td></td>
+                <td colspan="4">Total Unpaid: {{total_unpaid |floatformat:0 | intcomma }} </td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+      </table>
+      {% endif %}
+
+
+
+      <div class="row">
+        <h1 c;ass="col-12">Payment History</h1>
+    
+        {% if car_payment_history %}
+
+
+            <table class="table table-striped table-bordered">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <td>Invoice No</td>
+                        <td>Record Date</td>
+                        <td>Date of Vlaidity</td>
+                        <td>Particulars</td>
+                        <td>Amount</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for car in car_payment_history %}
+                    <tr>
+                        <td>{{car.id}}</td>
+                        <td>{{car.record_date}}</td>
+                        <td>{{car.date_of_validity}}</td>
+                        <td>{{car.particulars}}</td>
+                        <td>{{car.inc_amount | floatformat:0 | intcomma}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot class="bg-dark text-white">
+                    <tr>
+                        <td></td>
+                        <td colspan="4">Total Unpaid: {{total_unpaid |floatformat:0 | intcomma }} </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+              </table>
+
+     
+      {% endif %}
+
+    </div>
+
+
+
+
+</div><!--closes outer most div col-12-->
+
+
+{% endblock %}

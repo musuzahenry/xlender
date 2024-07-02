@@ -1,0 +1,66 @@
+
+
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="col-12">
+
+    <h1>Employee List</h1>
+     <br/>
+     {% for message in messages %}
+     <p style="text-align: center;" class="bg-success text-white">{{message}}</p>
+     {% endfor %}
+    <table class="table table-bordered table-striped">
+        <thead class="bg-dark text-white">
+            <tr>
+            <td>No#</td>
+            <td>Employee Name</td>
+            <td>Street</td>
+            <td>Change Street</td>
+            <td>Unique ID</td>
+            </tr>
+    </thead>
+    <tbody>   
+        {% for employee in all_employees %}
+        <tr>
+            <td>{{employee.id}}</td>
+            <td>{{employee.surname}} {{employee.first_name}}</td>
+            <td>{{employee.streetID}}</td>
+            <td>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <select name="street-id">
+                    <option value="NA">Choose Street</option>
+                    {% for street in all_current_streets %}
+                    <option value="{{street.id}}">{{street.street_name}}</option>
+                    {% endfor %}
+                </select>
+                <input type="hidden" name="emp-id" value="{{employee.id}}">
+                <button style="margin-top:2px;" type="submit" class="btn btn-primary btn-sm text-white">
+                    <i class="fa fa-angle-right"></i>&nbsp; Save</button>
+            </form>
+        </td>
+        <td>{{employee.userID}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+    <tfoot class="bg-dark text-white">
+        <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        </tr>
+</tfoot>
+    </table>
+</div>
+{% endif %}
+
+
+{% endblock %}

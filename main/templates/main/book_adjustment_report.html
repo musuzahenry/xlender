@@ -1,0 +1,72 @@
+{% extends 'main/base.html' %}
+
+{% load static %}
+
+{% block content%}
+
+{% if user.is_authenticated %}
+
+
+
+
+<div class='row'>
+    <h1 class="col-12">Book Adjustments Report</h1>
+    <p class="col-12">
+        <form class="form-inline" method="POST" action="{% url 'main:book-adjustment-report' %}">
+            {% csrf_token %}
+            <select  name="station-id" id="station">
+                <option  value="0">Choose Station</option>
+                {% for station in get_global_db_objects.stations %}
+                    <option value="{{station.id}}">{{station.station_name}}</option>          
+                {% endfor %}
+            </select>&nbsp;
+            <input type="date" name="date1" placeholder="yyyy-mm-dd" required>&nbsp;
+            <input type="date" name="date2" placeholder="yyyy-mm-dd" required>
+            <button class="btn btn-sm btn-info text-white" type="submit">Load</button>
+        </form>
+        </p>
+
+</div>
+
+
+
+<div class='row'>
+
+    {% if request.POST.date1 %}
+    <p class="col-12"><b>From:</b> {{request.POST.date1}} <b>To:</b> {{request.POST.date2}} </p>
+    {% else %}
+    <p class="col-12">Today's Report</p>
+    {% endif %}
+
+    <table class="table table-bordered table-striped">
+        <thead class="bg-dark text-white">
+            <tr>
+                <td>Station</td>
+                <td>Record Date</td> 
+                <td>Reason</td> 
+                <td>User</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for report in report_list %}
+            <tr>
+                <td>{{report.stationID}}</td> 
+                <td>{{report.record_date}}</td> 
+                <td>{{report.report_text}}</td> 
+                <td>{{report.userID}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+
+
+{% endif %}
+
+
+{% endblock %}

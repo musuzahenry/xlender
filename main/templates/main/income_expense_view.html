@@ -1,0 +1,165 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+{% load humanize %}
+
+
+{% block content %}
+<!-- Open block content-->
+<div class="row" style="margin-top: 20px;">
+
+<div class="col-12"> 
+<h4 class="col-12" data-target="#expense" data-toggle="collapse" style="cursor: pointer;">
+    <i style="text-align: center; padding: 5px; border:0px solid transparent; border-radius: 100%; width:25px;"
+    class="fa fa-plus  bg-info text-white">
+    </i> &nbsp; Add Other Expense<i class="fa fa-angle-down"></i></h4>
+
+    <div id="expense" class="collapse">
+        <h3>Add Other Expenses</h3>  
+         <form action="" method="POST" class="row">
+            {% csrf_token %}
+            <div  class="col-12 col-md-6">
+                <div class="row">
+            <input type="hidden" name="inc-exp-add" value="inc-exp-add">
+            <input type="hidden" name="supper-typeID" value="2">          
+            <label class="col-12 col-md-11"  for="expense-cat-name">Category</label>
+            <select class="col-12 col-md-11"  name="cat-name" id="expense-cat-name">
+                <option value="NA">--</option> 
+                {% for expense_type in expense_type_list %}
+                    <option value="{{expense_type.item_category_name}}">{{expense_type.user_friendly_name}}</option>                  
+                {% endfor %}
+            </select>
+
+            <label class="col-12 col-md-11"   for="decsription">Description</label>
+            <textarea class="col-12 col-md-11" required  
+            name="decsription" id="decsription"></textarea>
+        </div> 
+        </div>
+
+        <div  class="col-12 col-md-6">
+         <div class="row">
+        <label class="col-12 col-md-11"   for="pay-methodID">Pay Method</label>                  
+            <select class="col-12 col-md-11"    name="pay-method-id" id="pay-methodID">
+            {% for pay_method in get_global_db_objects.pay_methods %}
+                <option value="{{pay_method.id}}">{{pay_method.pay_method_name}}</option>          
+            {% endfor %}
+        </select> 
+            <label class="col-12 col-md-11"  for="pay-medium">Pay Medium</label>
+            <input class="col-12 col-md-11"   type="text"  name="pay-medium">
+            <label class="col-12 col-md-11" for="pay-identification">Pay Identification</label>
+            <input class="col-12 col-md-11"  type="text" name="pay-identification">
+
+            <label class="col-12 col-md-11"  for="amount">Amount</label>
+            <input type="number" class="col-12 col-md-11"  name="amount" id="amount" required>
+            <br>
+            <div class="col-12 col-md-3">
+            <input style="margin-top:3px;" type="Submit" value="Submit" class="btn btn-sm btn-info text-white">
+            </div>
+        </div>
+        </div>
+        </form>    
+    </div>
+</div>
+
+
+
+
+
+<div class="col-12">
+<h4 class="col-12" data-target="#income" data-toggle="collapse" style="cursor: pointer;">
+    <i style="text-align: center; padding: 5px; border:0px solid transparent; border-radius: 100%; width:25px;" 
+    class="fa fa-plus bg-info text-white">
+    </i> &nbsp; Add Other Income<i class="fa fa-angle-down"></i></h4>
+
+<div id="income" class="collapse">
+    <h3>Add Other Incomes</h3>
+
+    <form action="" method="POST" class="row">
+    {% csrf_token %}
+        <div class="col-md-6 col-12">
+            <div class="row">
+        <input type="hidden" name="inc-exp-add" value="inc-exp-add">
+        <input type="hidden" name="supper-typeID" value="1">
+        
+        <label class="col-12 col-md-11"  for="income-type-name">Category</label>
+        <select class="col-12 col-md-11"   name="cat-name" id="income-type-name">
+            <option value="NA" >--</option> 
+            {% for income_type in income_type_list %}
+                <option value="{{income_type.item_category_name}}">{{income_type.user_friendly_name}}</option>                  
+            {% endfor %}
+        </select>
+        <label class="col-12 col-md-11"  for="decsription">Description</label>
+        <textarea class="col-12 col-md-11"  name="decsription" id="decsription" required ></textarea>
+    </div> 
+   </div>
+    <div class="col-md-6 col-12">
+        <div class="row">
+
+        <label class="col-12 col-md-11"  for="pay-methodID">Pay Method</label>                  
+        <select class="col-12 col-md-11"   name="pay-method-id" id="pay-methodID" required>
+        {% for pay_method in get_global_db_objects.pay_methods %}
+            <option value="{{pay_method.id}}">{{pay_method.pay_method_name}}</option>          
+        {% endfor %}
+    </select> 
+        <label class="col-12 col-md-11"  for="pay-medium">Pay Medium</label>
+        <input class="col-12 col-md-11"  type="text"  name="pay-medium">
+        <label class="col-12 col-md-11"  for="pay-identification">Pay Identification</label>
+        <input class="col-12 col-md-11"  type="text" name="pay-identification">
+        <label class="col-12 col-md-11"  for="amount">Amount</label>
+        <input type="number" class="col-12 col-md-11"  name="amount" id="amount" required>
+        <br>
+        <input style="margin-top:3px;" type="Submit" value="Submit" class="btn btn-sm btn-info text-white">
+    </div>
+   </div>
+    </form> 
+
+   </div>
+</div>
+
+</div>
+
+<br>
+<div class="row">
+
+
+ <table class="table table-bordered table-striped">
+    <thead class="bg-info text-white">
+        <tr>
+            <th>Record Date</th>
+            <th>Station</th>
+            <th>Particulars</th>
+            <th>Debit</th>
+            <th>Credit</th>
+            <th>User</th>
+        </tr>
+    </thead>
+    {%  for record in cashbook_today %}
+    <tr>
+        <td>{{record.record_date}} </td>
+        <td>{{record.stationID}} </td>
+        <td>{{record.item_name}} </td>
+        <td>{{record.inc_amount | intcomma}} </td>
+        <td>{{record.exp_amount | intcomma}} </td>
+        <td>{{record.userID}} </td>
+    </tr>
+    {% endfor %}
+
+    <tfoot  class="bg-dark text-white">
+        <td></td>
+        <td></td>
+        <td colspan="4">
+            Total Debit: {{total_income | intcomma}} &nbsp;
+            Total Credit: {{total_expense | intcomma}} &nbsp;
+            Net: {{net | intcomma}} </td>
+    </tfoot>
+
+
+    </table>
+
+</div>
+<!--Close block content-->
+{% endblock %}
+
+
+
+

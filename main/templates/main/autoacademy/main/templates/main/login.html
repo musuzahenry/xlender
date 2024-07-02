@@ -1,0 +1,75 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+
+<head lang="eng">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %} DTL UG. LTD | AutoAcademy {% endblock %}</title>
+    
+    <!-- CSS only-->
+    <!-- ===================================================================== -->
+    <!-- Our custom css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'all/style.css'  %}">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'all/bootstrap.min.css'  %}">
+    <!-- fontawesome css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'all/all.min.css'  %}">
+
+    <!-- 
+        We include JQuery and Jsdelir in the jead since they will be used in the body of the html page
+        ==================================================================================
+     -->
+    <script type="text/javascript" src="{% static 'all/jquery.min.js' %}" ></script>
+      <!--HTML table to Excel--->
+    <script src="
+      https://cdn.jsdelivr.net/npm/jquery-table2excel@1.1.1/dist/jquery.table2excel.min.js
+      "></script>
+
+</head>
+<body>
+{% load static %}
+<div class="container-fluid">
+
+
+<p style="text-align: center; "><img  style="width:200px;margin-bottom: -10px; " src="{{business.logo}}"></p>
+
+<p style="text-align: center; font-weight: bold;">WELCOME TO AUTOACADEMY</p>
+<div class="row">
+    <div class="col-md-4 col-12"></div>
+    <div class="col-12 col-md-4">
+        <h3 >Login</h3>
+    <form method="POST" action="{% url 'user-login' %}" class="row" style="padding: 10px;">
+        {% csrf_token %}
+        <label style="background: rgb(24, 54, 94); color:white;" class="col-12" for ="username">Username</label><br/>
+        <input class="col-12"type="text" name="username" id="username"><br/>
+        <label style="background: rgb(24, 54, 94); color:white;" class="col-12" for="password">Password</label><br/>
+        <input class="col-12" type="password" name="password" id="password"><br/>
+        
+        <button onclick="this.disabled=true,this.form.submit();"
+            style="width:80px; margin-top: 4px;"type="submit" class="btn btn-primary btn-sm">
+            <i class="fa fa-power-off"></i> Login</button>
+
+    </form>
+
+    <p>&copy; Copyright 2023 DTL UG. Ltd</p>
+    </div>
+</div>
+
+
+
+<!---  From here--------------------------->
+
+ <!-- bootstrap js-->
+    <script type="text/javascript" src="{% static 'all/bootstrap.bundle.min.js' %}" ></script> 
+    <script type="text/javascript" src="{% static 'all/style.js' %}" ></script>
+
+
+
+    </div><!-- Closes main wrapper div -->
+</body>
+</html

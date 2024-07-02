@@ -1,0 +1,117 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+
+<div class="row"> <!-- Spans Client and Loans--> 
+
+{% if user.is_authenticated %}
+
+
+<div class="col-12" >
+
+
+</div>
+
+
+<div class="col-12" >
+
+
+    <h1>View Paid Stickers</h1>
+
+    {% for message in messages %}
+    <p class="bg-danger text-white" style="text-align: center;">{{message}}</p>
+    {% endfor %}
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <label for="date1">From: </label>
+        <input type="date" name="date1" placeholder ="From" required>
+        <label for="date2">To: </label>
+        <input type="date" name="date2" placeholder="To" required>
+        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+    </form>
+
+    <p>
+        {% if orig_date1 %} 
+           From <b><i>{{orig_date1}}</i></b> 
+        {% endif %} 
+        {% if orig_date2 %} 
+           To <b><i>{{orig_date2}}</i></b> 
+        {% else %}
+        Today's Report
+        {% endif %}
+
+        {{ist_of_stickers}}
+    </p>
+
+
+    <p>
+        <button class="export-to-excel btn btn-primary btn-sm">Export ToExcel</button>
+    </p>
+
+    <table class="table table-striped table-striped table-bordered" id="tab-export">
+        <thead class="bg-dark text-white">
+            <tr>   
+                <td>No#</td>
+                <td>Record Date</td>
+                <td>Expiry Date</td>
+                <td>Client Name</td>
+                <td>Particulars</td>
+                <td>Amount</td>
+                <td>Recording User</td>
+            </tr>
+        </thead>
+        <tbody>
+       {% for sticker in list_of_stickers %}
+            <tr>   
+                <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.id}}</a></td>
+                <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.record_date}}</a></td>
+                <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.expiry_date}}</a></td>
+                <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.client_name}}</a></td>
+                <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.particulars}}</a></td>
+                <td style='text-align: right;'>
+                    <a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.amount | floatformat:0 | intcomma }}</a> </td>
+                <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.user_full_name}}</a></td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+        <tfoot class="bg-dark text-white">
+            <tr>   
+                <td>Count: {{count}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style='text-align: right;' colspan="2">Total: {{total | floatformat:0 | intcomma}} </td>
+                <td></td>
+            </tr>
+        </tfoot>
+
+    </table>
+</div>
+
+
+{% endif %}
+</div><!--closes this page top row div-->
+
+
+<script>
+    $(".export-to-excel").click(function(){
+       $("td").find("input").remove("input")
+       $("td").find("label").remove("label")
+       $("td").find("i").remove("i")
+       $("#tab-export").table2excel({  
+    exclude: "",
+    name: "Worksheet Name",
+    filename: "ReportForPaidStickers.xls", // do include extension
+    preserveColors: true // set to true if you want background colors and font colors preserved
+})
+
+});
+</script>
+
+{% endblock %}

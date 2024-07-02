@@ -1,0 +1,51 @@
+
+{% extends 'main/bursar_dashboard.html' %}
+
+{% load static %}
+
+{% block content %}
+
+{% for message in messages %}
+<p class="bg-info" style="text-align: center;">{{message}}</p>
+{% endfor %}
+
+
+<div class="col-md-3 col-12"></div>
+
+<div class="col-md-6 col-12">
+
+    <h4 class="bg-primary text-white" 
+    style="text-align: center; margin-top: 10px; margin-bottom: 0px;">Requirements Speceific To A Class</h4>
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <td>Class Name</td>
+            <td colspan="{{no_of_types}}">Requirements</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for this_class in all_classes %}
+        <tr>
+            <td style="font-weight: bold;">{{this_class.class_name}}</td>
+
+
+            {% for type in  ALL_STUDENT_TYPES %}
+            <td>
+                <form method="POST" action=""> 
+                    {% csrf_token %}
+                    <input type="hidden" name="student-typeID" value="{{type.id}}">
+                    <input type="hidden" name="classID" value="{{this_class.id}}">
+                    <button type="submit" class="btn btn-sm btn-primary">{{type.student_type_name}}</button>
+                </form>
+            </td>
+            {% endfor %}
+
+
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot></tfoot>
+</table>
+
+</div>
+{% endblock %}

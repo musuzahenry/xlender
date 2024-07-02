@@ -1,0 +1,59 @@
+
+
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+{% if not user.is_authenticated  %}
+    <div class="bg-dark col-12">
+        <p style="text-align: center; color:white !important;">DTL CITY CAR REVENUE </P>
+    </div>
+{% endif %}
+
+
+<div class="col-12" >
+
+    <p style="margin-top: 5px;" id="pay-results-buttons">
+
+  
+        <form style="display: inline;" >
+            <a class="btn btn-primary btn-sm"
+            href="{% url 'make-car-transaction' %}">&nbsp;<i class="fa fa-house"></i>Home</a>
+        </form>
+
+        <form style="display: inline;" action="{% url 'search-for-a-car-results' %}"  method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="no-plate-search" value="{{plate_no}}">
+                   <button  class="btn btn-primary btn-sm" type="Submit"><i  class="fa fa-search"></i> Back</button>
+        </form>
+             
+        <form style="display: inline;" action ="{% url 'search-invoice-details-invoices' %}" method="POST"> 
+            {% csrf_token %}     
+        <input name="no-plate-search" type="hidden" value="{{plate_no}}">
+          <button type="Submit" class="btn btn-primary btn-sm">Payments</button>
+        </form>
+       
+        <form style="display: inline;" action ="{% url 'search-invoice-details-stickers' %}" method="POST">
+            {% csrf_token %}
+        <input name="no-plate-search" type="hidden" value="{{plate_no}}" >
+        <button type="Submit" class="btn btn-primary btn-sm">Stickers</button>
+      </form>
+
+
+    </p>
+</div>
+
+
+{% if user.is_authenticated %}
+{% include "main/search_invoice_details_stickers_private.html" %}
+{% endif %}
+
+{% if not user.is_authenticated %}
+{% include "main/search_invoice_details_stickers_public.html"  %}
+{% endif %}
+
+
+{% endblock %}

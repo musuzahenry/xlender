@@ -1,0 +1,48 @@
+
+
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+
+<head lang="eng">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %} DTL UG. LTD | AutoAcademy {% endblock %}</title>
+    
+    <!-- CSS only-->
+    <!-- ===================================================================== -->
+    <!-- Our custom css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'all/style.css'  %}">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'all/bootstrap.min.css'  %}">
+    <!-- fontawesome css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'all/all.min.css'  %}">
+
+    <!-- 
+        We include JQuery and Jsdelir in the jead since they will be used in the body of the html page
+        ==================================================================================
+     -->
+    <script type="text/javascript" src="{% static 'all/jquery.min.js' %}" ></script>
+      <!--HTML table to Excel--->
+    <script src="
+      https://cdn.jsdelivr.net/npm/jquery-table2excel@1.1.1/dist/jquery.table2excel.min.js
+      "></script>
+
+</head>
+
+<body>
+
+
+
+
+<a href="{% url 'user-logout' %}">Logout</a>
+<h1 class="bg-danger">Welcome to AutoAcademy</h1>
+<p>You are now logged in as {{request.user}}</p>
+
+
+</body>
+</html

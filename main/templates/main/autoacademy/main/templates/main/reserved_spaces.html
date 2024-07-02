@@ -1,0 +1,227 @@
+
+
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="col-12">
+
+        <form class="row" method="POST" action="{% url 'search-reserved-spaces' %}">
+            {% csrf_token %}
+            <p style="margin-bottom:2px;"><b>Search For A Space</b></p>
+            <input class="col-9 col-md-8" 
+            type="text" name="search-space-name" placeholder="*Enter space name*" 
+            value="All" />
+            <button style="width:50px;"type="submit" class="btn btn-sm btn-primary text-white"
+            onclick="this.disabled=true,this.form.submit();">Load</button>
+
+        </form>
+
+    {% for message in messages %}
+    <p class="bg-success text-white" style="text-align: center;">{{message}}</p>
+    {% endfor %}
+
+</div>
+
+<div class="row">
+    <h2 style="color:brown !important; font-size: 16px !important; cursor: pointer;"
+    class="col-12"
+    data-bs-target="#reserved-form" data-bs-toggle="collapse" >
+    NAME: <b>{{request.session.current_reserved_client_name}}</b>
+    <span 
+    style="font-size:16px; cursor: pointer;">
+     <i style="border-radius:100%; padding: 10px;" class="fa fa-plus fa-btn btn-danger"></i>
+    </span>
+</h2>
+
+<div class="col-12">
+    <form method="POST" action=""
+         class="row collapse" id="reserved-form">
+        {% csrf_token %}
+        <div class="col-12 col-md-4">
+        <input type="hidden" name="client-space-id" value="{{request.session.current_reserved_clientID}}" />
+        <label style="width:100%;">Reserved Space Name</label>
+        <input style="width:100%;" type="text" name="client-name" 
+        value="{{request.session.current_reserved_client_name}}" disabled />
+        <label style="width:100%;">Number of Spaces</label>
+        <input style="width:100%;" type="number" name="number-of-spaces" value="1" required>
+        </div>
+        <div class="col-12 col-md-4">
+        <label style="width:100%;">Duration(in months)</label>
+        <input style="width:100%;" type="number" name="duration" value="1" required>
+        <label style="width:100%;">Unit Amount</label>
+        <input style="width:100%;" type="number" name="amount" value="{{reserved_space_amount}}" disabled>
+        <button style="width:100px; margin-top: 4px;"stype="submit" class="btn btn-sm btn-primary"
+        onclick="this.disabled=true,this.form.submit();">Submit</button>
+        </div>
+    </form>
+</div>
+
+
+<div class="col-md-4 col-12">
+    {% if current_space_valid %}
+    <p>
+      <i style="border-radius: 100%; padding: 5px !important; padding-top: 2px !important;
+      padding-bottom: 2px !important;" 
+      class="fa fa-2x  fa-check btn btn-success text-white"></i> <b>Valid Sapce Available </b>
+    {% else %}
+    <i  style="border-radius: 100%; height: 38px; padding-top: 10px;" 
+    class="fa fa-times btn btn-danger text-white"></i> <b>No valid Sapces Available</b>
+    {% endif %}
+    </p>
+
+    <p><b>InvoiceID: </b> <span style="font-weight: bold; color:brown;"><i>
+      {{invoice.id}}</i></span></p>
+    <p>
+
+        <span style="cursor: pointer; " data-bs-target="#receipt-div" data-bs-toggle="collapse"
+        class="btn btn-success text-white btn-sm font-weight:normal !important;">
+        <span 
+        style="border-right: 1px solid rgb(255, 253, 253) !important; border-radius: 5px; padding-right:4px;">
+            <i style="font-size: 17px !important; border-radius: 15px;" 
+        class="fa fa-file"></i> 
+        </span>
+        &nbsp;<b>Receipt</b></span>
+        &nbsp;
+        <span style="cursor: pointer;" class="btn btn-danger text-white btn-sm font-weight:normal !important;" 
+        data-bs-target="#invoice-div" data-bs-toggle="collapse">
+            <span style="border-right: 1px solid rgb(255, 255, 255) !important; border-radius: 5px; padding-right:4px;">
+            <i  style="font-size: 17px !important;" class="fa fa-file"></i>
+            </span>
+        <b>&nbsp;Invoice</b></span>
+    </p>
+   </div>
+
+    <div class="col-md-4 col-12 collapse" id="receipt-div"> 
+    {% if invoice.paid %}
+     <p style="text-align: center; line-height:40px !important;" class="bg-dark text-white"><b>RECEIPT</b></p>
+     <p style="text-align: left; margin: 0px; font-size:16px; text-transform: uppercase;">
+        <b>{{current_space.governing_bodyID}}</b><br/>
+                <i><b>{{current_space.RegionID}}</b></i>, <b>{{current_space.streetID}}</b>
+      </p>
+      ================================
+     <p> 
+         Record Date: <b>{{current_space.record_date | date:"M d, Y" }}</b><br/>
+         Expires on: <b>{{current_space.expiry_date | date:"M d, Y"}}</b><br/>
+         Receipt No: <b>{{current_space.id}}-{{receipt.id}}</b><br/>
+         {% if current_space.refunded %} 
+         Refund Status: <span style="color:brown;"><b>REFUNDED</b></span><br/>
+         {% endif %}
+         Particulars: <b><i>Reserved Space</i></b><br />
+         Client Name: <b>{{current_space.reserved_space_name}}</b><br/>
+         Space No: <b>{{current_space.description}}</b><br />
+         <br/>
+         Printed by: <b>{{request.user}}</b><br/>
+         Printed on: <b>{% now 'jS F Y H:i' %}</b>
+        </p>
+         <p>
+            Copyright  © {% now 'Y' %}, <b>{{dtl_info.dtl_full_name}}</b>, 
+            <span style="font-size:13px;">{{dtl_info.phone_number}},
+            {{dtl_info.email}}, {{dtl_info.address}}, <i>{{dtl_info.other_details}}</i></span>
+         </p>
+        <table>
+        <tr>
+         <td>
+         <button style="margin-top: -16px;"
+         class="btn btn-primary btn-sm text-white">Print</button>
+         </td>
+         <td>
+         <form method="POST" action="{% url 'request-reserved-refund' %}" style="padding: 0px !important;">
+            {% csrf_token %}
+          <input type="hidden" name="receipt-id" value="{{receipt.id}}">
+            <button class="btn btn-sm btn-danger">Request Refund</button>
+         </form>
+         </td>
+         </tr>
+         </table>
+         {% else %}
+
+         <p 
+         class="bg-danger text-white" 
+         style="text-align: center; padding-top: 50px; padding-bottom: 50px;">
+         Space not yet paid 
+        </p>
+
+         {% endif %}
+    </div>
+
+    <div class="col-md-4 col-12 collapse" id="invoice-div"> 
+        <p style="text-align: center; line-height:40px !important;" class="bg-dark text-white"><b>INVOICE</b></p>
+        <p style="text-align: left; margin: 0px; font-size:16px; text-transform: uppercase;">
+            <b>{{current_space.governing_bodyID}}</b><br/>
+                    <i><b>{{current_space.RegionID}}</b></i>, <b>{{current_space.streetID}}</b>
+          </p>
+          ================================
+        <p> 
+            Record Date: <b>{{current_space.record_date | date:"M d, Y"}}</b><br/>
+            Expires on: <b>{{current_space.expiry_date | date:"M d, Y"}}</b><br/>
+            Invoice No: <b>{{current_space.id}}-{{invoice.id}}</b><br/>
+            Particulars: <b><i>Reserved Space</i></b><br />
+            Client Name: <b>{{current_space.reserved_space_name}}</b><br/>
+            Space No: <b>{{current_space.description}}</b><br />
+            <br/>
+            Printed by: <b>{{request.user}}</b><br/>
+            Printed on: <b>{% now 'jS F Y H:i' %}</b>
+           </p>
+            <p>
+                Copyright  © {% now 'Y' %}, <b>{{dtl_info.dtl_full_name}}</b>, 
+                <span style="font-size:13px;">{{dtl_info.phone_number}},
+                {{dtl_info.email}}, {{dtl_info.address}}, <i>{{dtl_info.other_details}}</i></span>
+            </p>
+            <table><tr><td>
+            <p style="margin-top: 0px;">
+            <button class="btn btn-primary btn-sm text-white">Print</button>
+            </p>
+             </td><td>
+            <form method="post" action ="{% url 'pay-reserved-space' %}" style="padding: 0px !important;">
+                {% csrf_token %}
+                <input type="hidden" name="pay-reserved-invoiceID" value="{{invoice.id}}">
+                <button class="btn btn-sm btn-success text-white">Pay now</button>
+            </form>
+            </td></tr></table>
+       </div>
+    
+
+</div>
+
+<div class="row" style="margin-top: 5px;">
+    <table class="table table-striped table-bordered">
+
+        <thead class="bg-dark text-white"> 
+            <td>NO#</td>
+            <td>Valid From</td>
+            <td>To</td>
+            <td>Reserved Space</td>
+            <td>Amount</td>
+            <td>User</td>
+        </thead>
+        <tbody>
+            {% for space_invoice in spaces_invoice_list %}
+            <tr {% if space_invoice.paid %}   {% else %} style="background:rgb(255, 159, 159);" {% endif %}>  
+              <td><a href="{% url 'set-reserved-space-by-click' space_invoice.reserved_spaceID.id %}">{{space_invoice.id}}</a></td>
+              <td><a href="{% url 'set-reserved-space-by-click' space_invoice.reserved_spaceID.id %}">{{space_invoice.reserved_spaceID.record_date}}</a></td>
+              <td><a href="{% url 'set-reserved-space-by-click' space_invoice.reserved_spaceID.id %}">{{space_invoice.reserved_spaceID.expiry_date  | date:"M d, Y"}}</a></td>
+              <td><a href="{% url 'set-reserved-space-by-click' space_invoice.reserved_spaceID.id %}">{{space_invoice.reserved_spaceID.description}}</a></td>
+              <td><a href="{% url 'set-reserved-space-by-click' space_invoice.reserved_spaceID.id %}">{{space_invoice.inc_amount | floatformat:0 | intcomma }}</a></td>
+              <td><a href="{% url 'set-reserved-space-by-click' space_invoice.reserved_spaceID.id %}">{{space_invoice.user_full_name}}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        <tfoot class="bg-dark text-white">
+            <td>--</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tfoot>
+    </table>
+</div>
+{% endif %}
+
+
+{% endblock %}

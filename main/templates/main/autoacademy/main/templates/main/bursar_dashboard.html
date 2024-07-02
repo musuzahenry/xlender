@@ -1,0 +1,366 @@
+{% load static %}
+{% load humanize %}
+
+
+{% include "main/bursar_dashboard_header.html" %}
+
+{% include "main/bursar_dashboard_sidebar.html" %}
+
+<div class="col-12" >
+<div class="row" style="min-height: 80%;">
+
+    <div class="row">
+       
+            {% block content %}
+            
+            {% for message in messages %}   
+            <p style="text-align: center; color:white;"   
+                {% if message.level_tag == 'info' %} 
+                class="col-12 bg-success"  
+                {% else %} 
+                class="col-12 bg-danger" 
+                {% endif %} >
+                    {{message}}
+                </p>
+            {% endfor %}
+
+            {% include 'main/student_search_form.html' %}
+
+             <div class="col-12 col-md-6">
+              <table class="table table-bordered table-striped"> 
+                <thead>
+                    <tr>
+                        <td>Student Name</td>
+                        <td>Gender</td>
+                        <td>Date Of Birth</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-size:15px;">
+                            <a href="{% url 'edit-student' %}">
+                                <i class="fa fa-pencil"></i> Std NO# {{current_student.id}}: {{current_student.fullname}}</a>
+                        </td>
+                        <td>{{current_student.gender}}</td>
+                        <td>{{current_student.date_of_birth}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><i>Current Class:</i> &nbsp;<b><i>{{current_student.year_class}}</i></b>&nbsp; |
+                        <i>Status</i>: <b><i>{{current_student.student_typeID.student_type_name}}</i></b>&nbsp; |
+                        <i>Stream</i>: <b><i>{{current_student.stream_name}}</i></b>&nbsp; | 
+                        <i>Term</i>: <b><i>{{current_student.term_name}}</i></b> </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">Fees Balance: &nbsp;
+                        <b><i>{{current_student.balance | floatformat:0  | intcomma }}</i></b></td>
+                    </tr>
+                </tbody>
+              </table>
+
+              <p style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#addt-std-class"
+              ><span style="border:1px solid black; border-radius: 4px; padding: 8px;"><b>Add Class <i class="fa fa-angle-down btn btn-sm btn-danger"></i></b></span></p>
+              <form class="collapse" id="addt-std-class" method="POST" action="">
+                  {% csrf_token %}
+                  <table style="width:300px;" class="col-12">
+                  <tr>
+                      <td>
+                      <input type="hidden" name="add-class" value="0">
+                  <label class="col-12" for="status">Status</label>
+                  <select class="col-12" name="status" id="status" required>
+                      <option value="NA">--</option>
+                      {% for status in STUDENT_TYPES %}
+                        <option value="{{status.settings_name}}">{{status.student_type_name}}</option>       
+                      {% endfor %}
+                  </select> 
+                  </td>
+                  <td>
+                  <label class="col-12" for="class">Class</label>
+                  <select class="col-12" name="class" id="class">
+                    <option value="NA">--</option>
+                    {% for class in ALL_CLASSES %}
+                    <option value="{{class.settings_name}}">{{class.class_name}}</option>
+                    {% endfor %}
+                  </select>
+                  </td>
+
+                  <td>
+                      <label class="col-12" for="strem-name">Stream</label>
+                      <select class="col-12" name="strem-name" id="strem-name">
+                        {% for stream in ALL_STREAMS %}
+                        <option value="{{stream.settings_name}}">{{stream.stream_name}}</option>
+                        {% endfor %}
+                      </select>
+                  </td>
+                 
+                  <td>
+                  <label class="col-6" for="termID" style="width:80px;">Term</label>
+                  <select class="col-6" name="termID" id="termID" style="width:80px;">
+                    <option value="NA">--</option>
+                    {% for term in ALL_TERMS %}
+                    <option value="{{term.id}}">Term {{term.term_name}}</option>
+                    {% endfor %}
+                  </select>
+                  
+                  </td>
+                  </tr>
+                  <tr><td colspan="4">
+                      <button style="margin-bottom: 10px;" onclick="this.disabled=true,this.form.submit();"
+                      class="btn btn-sm btn-primary">Add</button>
+                  </td></tr>
+                  </table>
+              </form>
+
+
+             <div class="row">
+              
+                <div class="col-12" Style="padding-right: 0px; margin-right: 0px;">
+                    {% for yearclass in current_student_classes%}
+                    <a style="background: rgb(220,220,250); padding: 4px;" 
+                    class="active-class" href="{% url 'set-current-year-class-by-click' yearclass.id %}">
+                        {{yearclass.year_class}} {{yearclass.balance}} 
+                    </a>&nbsp;
+                    {% endfor %}
+                                      
+                </div>          
+             
+              </div>
+
+              <br/>
+              <p > <span style="border:1px solid black; border-radius: 4px; padding: 8px;">
+                <b>{{current_class.year_class}}</b> &nbsp;
+            <span data-bs-target="#add-term" data-bs-toggle="collapse"> <b>Add Term</b> <i class="fa fa-angle-down btn btn-sm btn-danger"></i></span>  
+           
+            <form action="" method="POST" class="collapse" id ="add-term">
+                {% csrf_token %}
+                <input type="hidden" name="add-term" value="0">
+                
+                <table style="width:300px;">
+                <tr>
+                    <td>
+                        <label class="col-12" for="status">Status</label>
+                        <select class="col-12" name="status" id="status" required>
+                            <option value="NA">--</option>
+                            {% for status in STUDENT_TYPES %}
+                            <option value="{{status.settings_name}}">{{status.student_type_name}}</option>       
+                            {% endfor %}
+                        </select> 
+                   </td>
+                   <td>
+                        <label class="col-12" for="termID">Term</label>
+                        <select class="col-12" name="termID" id="termID">
+                            <option value="NA">--</option>
+                            {% for term in ALL_TERMS %}
+                            <option value="{{term.id}}">Term {{term.term_name}}</option>
+                        {% endfor %}
+                        </select>
+                   </td>
+                    <td>
+                        <label class="col-12" for="strem-name">Stream</label>
+                        <select class="col-12" name="strem-name" id="strem-name">
+                        {% for stream in ALL_STREAMS %}
+                        <option value="{{stream.settings_name}}">{{stream.stream_name}}</option>
+                        {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <button type="submit" class="btn btn-sm btn-primary" id="add-term">Add</button>
+                   </td>
+                </tr>
+        </table>
+            </form>
+           </span>
+             </p>
+
+              <table class="table table-bordered table-striped">
+                <thead>
+                    <tr><td>Class</td><td>Stream</td><td>Term</td><td>::</td></tr>
+                </thead>
+
+              {% for term in current_year_class_terms %}
+              <tr>
+                <td>{{term.year_class}}</td> 
+                <td>{{term.stream_name}}</td> 
+                <td>{{term.term_name}}</td>
+                <td>
+                    <a href="{% url 'set-current-year-class-term-by-click' term.id %}"
+                    class="btn btn-sm btn-primary" href="">Details</a>
+                </td>
+              </tr>
+              {% endfor %}
+              </table>
+            
+
+              </div>
+
+
+
+
+
+
+              <div class="col-12 col-md-6">
+                <p style="margin-top: 7px; cursor: pointer;"><b>Requirements for {{current_year_term.year_class_term}}</b>
+                </p>
+
+                <p data-bs-target="#add-std-rqt" data-bs-toggle="collapse">
+                <span style="border:1px solid black; border-radius: 4px; padding: 8px;">
+                   Add Item <i class="fa fa-angle-down btn btn-sm btn-danger"></i></span>
+                </p>
+                
+                <form class="collapse" method="POST" action="" id="add-std-rqt">
+                    {% csrf_token %}
+                    <input type="hidden" name="add-item-for-std" value="0">
+                    <label style="width:170px;">Choose Item</label><br/>
+                    <select style="width:170px;" name="rqtID">
+                        <option value="NA">--</option>
+                        {% for rqt in all_requirements %}
+                        <option value="{{rqt.id}}">{{rqt.item_name}}</option>
+                        {% endfor %}
+                    </select><br/>
+                    <label style="width:170px;">Amount/Qty Required</label><br/>
+                    <input style="width:170px;"  type="number" placeholder="Amount / Qty" name="amount-qty" required><br/>
+                    <button tyle="submit" class="btn btn-sm btn-primary">Add</button>
+                </form>
+
+                
+
+                
+              <table class="table table-bordered table-striped">
+
+                <thead>
+                    <tr>
+                        <td>Item Name</td>
+                        <td>Original Amount</td>
+                        <td>Balance</td>
+                        <td>--</td>
+                    </tr>
+                </thead>
+
+                {% for rqt in current_requirements %}
+                <tr>
+    
+
+                <td style="cursor: pointer;">
+                        <span data-bs-target="#del-rqtID-{{rqt.id}}" data-bs-toggle="collapse">&#128465;</span>
+                        {{rqt.item_name}}
+                         <br />
+                        <form action="" method="POST" class="collapse" id="del-rqtID-{{rqt.id}}" >
+                            {% csrf_token %}
+                            <input type="hidden" name="del-rqtID" value="{{rqt.id}}"><br/>
+                            <textarea name="reason" required placeholder="Please enter reason"></textarea><br/>
+                            <button class="btn btn-sm btn-danger">Delete</button>
+
+                        </form>
+                    
+                </td>
+
+                <td>
+   
+                    {% if rqt.is_monetary %}
+                    {{rqt.amount_required | floatformat:0  | intcomma }}
+                    {% else %}
+                    {{rqt.quantity_required}}
+                    {% endif %}
+ 
+                </td>
+
+                <td>
+                    {{rqt.balance | floatformat:0  | intcomma }} 
+                 </td>
+
+                 <td>
+                    <span data-bs-toggle="collapse" data-bs-target = "#rqt-form-{{rqt.id}}" 
+                    class="btn btn-sm ">
+                    <span style="padding: 5px; border:1px solid grey; border-radius: 4px; padding: 5px;">
+                        <b><i>Pay</i></b><i class="fa fa-angle-down"></i></span>
+                    </span>
+                        <br/>
+                        <form method="POST" action="" 
+                        style="width:200px;" class="collapse" id="rqt-form-{{rqt.id}}">
+                        {% csrf_token %}
+                    <input type="hidden" name="pay-rqt-id" value="{{rqt.id}}">
+                    <input type="hidden" name="rqt-is-monetary" value="{{rqt.is_monetary}}">
+                    <select name="paymethodID">
+                    {% for pay_method in ALL_PAYMENT_METHODS %}
+                    <option value="{{pay_method.settings_name}}">{{pay_method.pay_method_name}}</option>
+                    {% endfor %}
+                    </select><br/>
+                    <input type="text" name="pay-number" placeholder="PayID Number"><br/>
+                    <input type="number" name="amount-qty-recieived" placeholder="Amount Received" required>
+                    <button class="btn btn-sm btn-primary">Process</button>
+                    </form>
+
+                 </td>
+
+                </tr>
+                {% endfor %}
+                 
+              </table>
+
+
+              <p style="font-size: 25px;">Received Items</p>
+
+              <div class="row">
+                <div class="col-12">
+
+                    
+
+                    <table class="table table-bordered table-striped">
+                        <thead >
+                            <tr>
+                                <th>:::</th>
+                                <th>Date</th>
+                                <th>Item Name</th>
+                                <th>Qty / Amount</th>
+                                <th>User</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for item_brought in  current_items_brought %}
+
+                            <tr style="background:{{item_brought.refund_bg_color}};">
+                                <td style="cursor: pointer;">
+                                    <span data-bs-target="#del-broughtID-{{item_brought.id}}" data-bs-toggle="collapse">&#128465;</span>
+                                
+                                     <br />
+                                    <form action="" method="POST" class="collapse" id="del-broughtID-{{item_brought.id}}" >
+                                        {% csrf_token %}
+                                        <input type="hidden" name="del-broughtID" value="{{item_brought.id}}"><br/>
+                                        <textarea name="reason" required placeholder="Please enter reason"></textarea><br/>
+                                        <button class="btn btn-sm btn-danger">Delete</button>
+
+                                    </form>
+                                </td>
+                                <td>{{item_brought.record_date}}</td>
+                                <td>{{item_brought.item_name}}</td> 
+                                <td>
+                                    
+                                    {% if item_brought.is_monetary %}
+                                    {{item_brought.amount_brought | floatformat:0  | intcomma }}
+                                    {% else %}
+                                    {{item_brought.quantity_brought}}
+                                    {% endif %}
+                                </td>
+                                <td>{{item_brought.user_fullname}}</td>
+                            </tr>
+
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+
+
+              </div>
+            <!-- Page content goes here-->
+            {% endblock %}
+        
+    </div> 
+
+</div>        
+</div>
+<!-- Footer -->
+{% include "main/footer.html" %}

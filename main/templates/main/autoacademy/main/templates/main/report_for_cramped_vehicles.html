@@ -1,0 +1,180 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+
+<div class="row"> <!-- Spans Client and Loans--> 
+
+{% if user.is_authenticated %}
+
+<div class="col-12" >
+
+
+    <h1>Cramped Vehicles</h1>
+
+    {% for message in messages %}
+    <p class="bg-danger text-white" style="text-align: center;">{{message}}</p>
+    {% endfor %}
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <label for="date1">From: </label>
+        <input type="date" name="date1" placeholder ="From" required>
+        <label for="date2">To: </label>
+        <input type="date" name="date2" placeholder="To" required>
+        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+    </form>
+
+
+    <p>
+        {% if orig_date1 %} 
+           From <b><i>{{orig_date1}}</i></b> 
+        {% endif %} 
+        {% if orig_date2 %} 
+           To <b><i>{{orig_date2}}</i></b> 
+        {% else %}
+        Today's Report
+        {% endif %}
+    </p>
+
+
+    <p  data-bs-target="#cramp-car" data-bs-toggle="collapse">
+        <button class="btn btn-sm btn-danger">Cramp a car&nbsp;
+            <i class="fa fa-plus"></i></button>
+    </p>
+    <div class="collapse" id="cramp-car">
+        <form action="{% url 'manually-cramp-car' %}" method="POST" 
+        style="border:1px solid rgb(108, 212, 216); border-radius: 5px; padding-top: 10px; padding-bottom: 10px;" 
+        class="row">
+            {% csrf_token %}
+            <div class="col-12"><p style="margin-bottom: -2px;"><b>Manually Cramp Car</b></p></div>
+            <div class="col-12 col-md-4">
+            <input type="hidden" name="manually-cramp-car"  value="0"/>
+            <label style="width:100%;">Plate No</label>
+            <input style="width:100%;" type="text" name="particulars" placeholder = "Particulars" required />
+            <label style="width:100%;">Number Plate Type</label>
+            Normal: <input type="radio" name="plate-type" value="Normal" checked/>&nbsp; 
+            &nbsp; Private: <input type="radio" name="plate-type" value="Private"/>
+            <label style="width:100%;">Full Bill</label>
+            <input style="width:100%;" type="number" name="total-bill" placeholder = "Enter bill" required />
+            </div>
+            <div class="col-12 col-md-4">
+            <label style="width:100%;">Reason</label>
+            <textarea style="width:100%;" name="reason" placeholder="Please enter reason" required></textarea>
+            <label style="width:100%;">Address</label>
+            <textarea style="width:100%;" name="address" placeholder="Please enter address" required></textarea>
+            <br/>
+            <button class="btn btn-primary btn-sm"
+            style="margin-top: 2px;">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <p>
+        <button class="export-to-excel btn btn-primary btn-sm">Export ToExcel</button>
+    </p>
+
+    <table class="table table-striped table-striped table-bordered" id="tab-export">
+        <thead class="bg-dark text-white">
+            <tr>   
+                <td>No#</td>
+                <td>Record Date</td>
+                <td>Particulars</td>
+                <td>Car Total Bill</td>
+                <td>Cramping Reason</td>
+                <td>Cramping Address</td>
+                <td>Recording User</td>
+            </tr>
+        </thead>
+        <tbody>
+       {% for cramped_car in list_of_cramped_vehicles %}
+            <tr {% if cramped_car.excuse_car %} style="background: rgb(108, 255, 108);" {% endif %}>   
+                <td><a href="{% url 'set-current-car-by-click' cramped_car.invoiceID.id %}">{{cramped_car.id}}</a>
+                    &nbsp;
+                    <button 
+                    style="font-size:12px !important;" 
+                    data-bs-target="#uncramp-form{{cramped_car.id}}" data-bs-toggle="collapse"
+                    class="btn btn-danger btn-sm text-white">Uncramp 
+                    &nbsp;<i class="fa fa-arrow-down"></i></button>
+                <form class="collapse" method="POST" action="" id="uncramp-form{{cramped_car.id}}">
+                    {% csrf_token %}
+                    <p><b>Pay / Uncramp</b></p>
+                    <input type="hidden" name="uncramp-id" value="{{cramped_car.id}}">
+                    <input style="width:90%;" type="number" name="amount" 
+                    value="{{cramped_car.carID.balance | floatformat:0 }}" disabled><br/>
+                    <textarea style="width:90%;" name="uncramp-reason" required>
+                    </textarea>                              
+                    <table  style="width:90%;">
+                        <tr>
+                        <td colspan="2">Excuse Car?</td>
+                        </tr>
+                        <tr>
+                        <td>
+                        <input type="radio" value="No" name="excuse-car" 
+                        {% if not cramped_car.excuse_car %} {{cramped_car.reason}} 
+                        checked
+                        {% endif %} />
+                        <span style="font-size: 11px;">No</span>
+                        </td>
+                        <td>
+                        <input type="radio" value="Yes"  name="excuse-car"
+                        {% if cramped_car.excuse_car %} 
+                        checked
+                        {% endif %} />
+                        <span style="font-size: 11px;">Yes</span>
+                        </td>
+                         </tr>
+                       </table>
+                    <button type="submit" class="btn btn-sm btn-primary text-white">Submit</button>
+                </form>
+                </td>
+                <td><a href="{% url 'set-current-car-by-click' cramped_car.invoiceID.id %}">{{cramped_car.record_date}}</a></td>
+                <td><a href="{% url 'set-current-car-by-click' cramped_car.invoiceID.id %}">{{cramped_car.particulars}}</a></td>
+                <td style='text-align: right;'>
+                    <a href="{% url 'set-current-car-by-click' cramped_car.invoiceID.id %}">{{cramped_car.carID.balance | floatformat:0 | intcomma }}</a> </td>
+                    <td><a href="{% url 'set-current-car-by-click' cramped_car.invoiceID.id %}">{{cramped_car.reason}}</a></td>
+                    <td><a href="{% url 'set-current-car-by-click' cramped_car.invoiceID.id %}">{{cramped_car.cramping_address}}</a></td>
+                    <td><a href="{% url 'set-current-car-by-click' cramped_car.invoiceID.id %}">{{cramped_car.user_full_name}}</a></td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+        <tfoot class="bg-dark text-white">
+            <tr>   
+                <td>Count: {{count}}</td>
+                <td></td>
+                <td style='text-align: right;' colspan="2">Total: {{total | floatformat:0 | intcomma}} </td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+
+    </table>
+</div>
+
+
+{% endif %}
+</div><!--closes this page top row div-->
+
+<script>
+    $(".export-to-excel").click(function(){
+       $("td").find("input").remove("input")
+       $("td").find("label").remove("label")
+       $("td").find("i").remove("i")
+       $("td").find("form").remove("table")
+       $("td").find("button").remove()
+       $("td").find("form").remove()
+       $("#tab-export").table2excel({  
+    exclude: "",
+    name: "Worksheet Name",
+    filename: "CrampedVehicles.xls", // do include extension
+    preserveColors: true // set to true if you want background colors and font colors preserved
+})
+});
+</script>
+
+{% endblock %}

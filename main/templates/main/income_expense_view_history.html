@@ -1,0 +1,44 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+{% load humanize %}
+
+
+{% block content %}
+<!-- Open block content-->
+<div class="row" style="margin-top: 20px;">
+
+<div class="col-12 col-md-6">
+<h4 data-target="#expense" data-toggle="collapse" style="cursor: pointer;">
+    Add Laon / Fines
+    </h4>
+
+
+    <form name="" method="POST" action="" class="row">
+        {% csrf_token %}
+        <input type="hidden" name="pay-old-loans" value="pay-old-loans">
+        <label class="col-12">Category</label>
+    <select class="col-12"  name="item-catID" id="expense-cat-name">
+        <option value="paying_existing_loan">Pay Loan</option> 
+        <option value="fines">Fines</option> 
+    </select>
+    <label class="col-12">Client Name</label>   
+    <textarea name="description" class="col-12">
+    </textarea>
+    <label class="col-12">Amount</label>
+    <input type="number" name="amount" class="col-12">
+    <br>
+    
+    <input type="submit" value="Submit">
+
+
+     </form>
+   
+</div>
+</div>
+<!--Close block content-->
+{% endblock %}
+
+
+
+

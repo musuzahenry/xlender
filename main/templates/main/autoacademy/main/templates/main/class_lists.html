@@ -1,0 +1,155 @@
+{% extends 'main/base.html' %}
+{% load humanize %}
+
+
+{% block content %}
+
+<div class="row">
+
+
+    {% for message in messages %}   
+    <p style="text-align: center; color:white;"   
+        {% if message.level_tag == 'info' %} 
+        class="col-12 bg-success"  
+        {% else %} 
+        class="col-12 bg-danger" 
+        {% endif %} >
+            {{message}}
+        </p>
+    {% endfor %}
+
+
+
+
+    <p class="col-12" style="margin-bottom: 0px; margin-top: 10px; background: rgb(223, 220, 220);">
+        <a class="btn btn-sm btn-primary" href="{% url 'index' %}"><i class="fa fa-arrow-left"></i> Back</a>
+    </p>
+
+    <div class="col-12">
+        <p style="margin-bottom: 4px; margin-top: 10px; width:100%;">
+            <span  style="padding: 5px;"><b>Make Filters</b></span>
+        </p>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <table style="width:370px;" class="col-12">
+            <tr>
+                <td style="width:100px;">
+                <label style="width:100px;" for="year">Year</label>
+                <input style="width:100px;" type="number" name="year" value="{% now 'Y' %}" required/>
+                </td>
+            <td >
+            <label class="col-12" for="class-name">Class</label>
+            <select class="col-12" name="class-name" id="class">
+              <option value="NA">--</option>
+              {% for class in ALL_CLASSES %}
+              <option value="{{class.class_name}}">{{class.class_name}}</option>
+              {% endfor %}
+            </select>
+            </td>
+
+            <td>
+                <label class="col-12" for="stream-name">Stream</label>
+                <select class="col-12" name="stream-name" id="strem-name">
+                  <option value="all">All</option>
+                  {% for stream in ALL_STREAMS %}
+                  <option value="{{stream.stream_name}}">{{stream.stream_name}}</option>
+                  {% endfor %}
+                </select>
+            </td>
+            </tr>
+            <tr><td colspan="4">
+                <button style="margin-bottom: 10px;"
+                class="btn btn-sm btn-primary">Load</button>
+            </td></tr>
+            </table>
+        </form>
+    </div>
+
+    <div class="col-12">
+
+        <p>
+            <b>Total Expected Fees:</b> <i>{{total_fees | floatformat:0 | intcomma }}</i>
+            <b>Total Paid:</b> <i>{{total_paid | floatformat:0 | intcomma }}</i>
+            <b>Total Balance:</b> <i>{{total_balance | floatformat:0 | intcomma }}</i>
+        </p>
+
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+                <td>NO#</td>
+                <td>Status</td>
+                <td>Class</td>
+                <td>Stream</td>
+                <td>Student Name</td>
+                <td>Original Fees</td>   
+                <td>Amount Paid</td>   
+                <td>Balance</td>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for class in class_list %}
+            <tr>
+                <td>
+                    <a href="{% url 'set-current-student-by-click' class.studentID.id %}">
+                    {{class.id}}
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'set-current-student-by-click' class.studentID.id %}">
+                    {{class.studentID.student_typeID.student_type_name}}
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'set-current-student-by-click' class.studentID.id %}">
+                    {{class.year_class}}
+                </a>
+                </td>
+                <td>
+                    <a href="{% url 'set-current-student-by-click' class.studentID.id %}">
+                    {{class.stream_name}}
+                   </a>
+                </td>
+                <td>
+                    <a href="{% url 'set-current-student-by-click' class.studentID.id %}">
+                    {{class.student_name}}
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'set-current-student-by-click' class.studentID.id %}">
+                    {{class.original_fees | floatformat:0 | intcomma }}
+                </a>
+            </td>
+
+            
+                <td>
+                    <a href="{% url 'set-current-student-by-click' class.studentID.id %}">
+                    {{class.amount_paid | floatformat:0 | intcomma}} 
+                </a>
+                </td>
+                <td>
+                    <a href="{% url 'set-current-student-by-click' class.studentID.id %}">
+                    {{class.studentID.balance | floatformat:0 | intcomma}}
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+          <tfoot>
+            <tr>
+                <td><b>Count:</b> <i>{{count}}</i></td>
+                <td colspan="6">
+                    <b>Total Expected Fees:</b> <i>{{total_fees | floatformat:0 | intcomma }}</i>
+                    <b>Total Paid:</b> <i>{{total_paid | floatformat:0 | intcomma }}</i>
+                    <b>Total Balance:</b> <i>{{total_balance | floatformat:0 | intcomma }}</i>
+                </td>
+                <td></td>
+            </tr>
+          </tfoot>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

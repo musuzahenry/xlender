@@ -1,0 +1,62 @@
+
+
+{% extends 'main/base.html' %}
+
+{% block content %}
+
+
+<div class="row">
+    <div class="col-12">
+        <table class="table table-bordered table-striped">
+
+            <thead>
+                <tr>
+                    <td>No#</td>
+                    <td>Student Name</td>
+                    <td>Current Class</td>
+                    <td>Balance</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in list_students %}
+
+                <tr>
+                    <td>
+                        <a href="{% url 'set-current-student-by-click' student.id %}">
+                        {{student.id}}
+                    </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'set-current-student-by-click' student.id %}">
+                            {{student.fullname}}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'set-current-student-by-click' student.id %}">
+                            {{student.year_class}}
+                        </a>
+                        </td>
+                    <td>
+                        <a href="{% url 'set-current-student-by-click' student.id %}">
+                            {{student.balance}}
+                        </a>
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+            </tfoot>
+
+        </table>
+    </div>
+</div>
+
+{% endblock %}

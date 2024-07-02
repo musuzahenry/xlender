@@ -1,0 +1,140 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+
+<div class="row"> <!-- Spans Client and Loans--> 
+
+{% if user.is_authenticated %}
+
+
+<div class="col-12" >
+
+
+</div>
+
+
+<div class="col-12" >
+
+
+    <h1>View Refund Requests</h1>
+
+    {% for message in messages %}
+    <p class="bg-success text-white" style="text-align: center;">{{message}}</p>
+    {% endfor %}
+
+    <form action="report-refund-submission" method="POST">
+        {% csrf_token %}
+        <label for="street-id">Street</label>
+        <select name="street-id">
+            <option value="NA">Choose Street</option>
+            {% for street in all_current_streets %}
+            <option value="{{street.id}}">{{street.street_name}}</option>
+            {% endfor %}
+        </select>
+        <label for="street-id">Employee</label>
+        <select name="employee-id">
+            <option value="NA">Choose Employee</option>
+            {% for employee in all_emploees %}
+            <option value="{{employee.id}}">{{employee.surname}} {{employee.first_name}}</option>
+            {% endfor %}
+        </select>
+        <label for="date1">From: </label>
+        <input type="date" name="date1" placeholder ="From" required>
+        <label for="date2">To: </label>
+        <input type="date" name="date2" placeholder="To" required>
+        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+    </form>
+
+    <p>
+        {% if orig_date1 %} 
+           From <b><i>{{orig_date1}}</i></b> 
+        {% endif %} 
+        {% if orig_date2 %} 
+           To <b><i>{{orig_date2}}</i></b> 
+        {% else %}
+        Today's Report
+        {% endif %}
+    </p>
+
+
+    <p>
+        <button class="export-to-excel btn btn-primary btn-sm">Export ToExcel</button>
+    </p>
+    
+
+    <table class="table table-striped table-striped table-bordered" id="tab-export">
+        <thead class="bg-dark text-white">
+            <tr> 
+                <td>No#</td>
+                <td>Record Date</td>
+                <td>Invoice Type</td>
+                <td>Particulars</td>
+                <td>Amount</td>
+                <td>Recording User</td>
+            </tr>
+        </thead>
+        <tbody>
+       {% for refund in list_of_refund_submissions %}
+            <tr>
+                <td>
+                    <i class="fa fa-angle-down btn btn-danger text-white" data-bs-target="#refund-form{{refund.id}}" data-bs-toggle="collapse"></i>&nbsp;
+                    <a href="{% url 'set-current-car-by-click' refund.id %}">{{refund.id}}</a><br/>
+                    <form class="collapse form form-inline" id="refund-form{{refund.id}}" 
+                      method="POST" action="refund-receipt">
+                        {% csrf_token %}
+                        <input type="hidden" name="request-refund-id" value="{{refund.id}}">
+                        <input type="number" value="{{refund.inc_amount}}" style="margin-top: 2px; width:100%;" disabled/><br/>
+                        <textarea name="refund-notes" style="margin-top: 2px; width:100%;"
+                        placeholder="Please give some details" required></textarea><br/>
+                        <button style="margin-top: 2px;" class="btn btn-sm btn-primary text-white">Refund</button>
+                    </form>
+                    
+                </td>   
+                <td><a href="{% url 'set-current-car-by-click' refund.id %}">{{refund.request_refund_date}}</a></td>
+                <td><a href="{% url 'set-current-car-by-click' refund.id %}">{{refund.invoice_typeID}}</a></td>
+                <td><a href="{% url 'set-current-car-by-click' refund.id %}">{{refund.particulars}}</a></td>
+                <td style='text-align: right;'>
+                    <a href="{% url 'set-current-car-by-click' refund.id %}">{{refund.inc_amount | floatformat:0 | intcomma }}</a> </td>
+                <td><a href="{% url 'set-current-car-by-click' refund.id %}">{{refund.request_username}}</a></td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+        <tfoot class="bg-dark text-white">
+            <tr>   
+                <td>Count: {{count}}</td>
+                <td></td>
+                <td></td>
+                <td style='text-align: right;' colspan="2">Total: {{total | floatformat:0 | intcomma}} </td>
+                <td></td>
+            </tr>
+        </tfoot>
+
+    </table>
+</div>
+
+
+{% endif %}
+</div><!--closes this page top row div-->
+
+<script>
+    $(".export-to-excel").click(function(){
+       $("td").find("input").remove("input")
+       $("td").find("label").remove("label")
+       $("td").find("form").remove()
+       $("td").find("i").remove("i")
+       $("#tab-export").table2excel({  
+    exclude: "",
+    name: "Worksheet Name",
+    filename: "RefundRequests.xls", // do include extension
+    preserveColors: true // set to true if you want background colors and font colors preserved
+})
+
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,143 @@
+
+
+
+{% extends "main/bursar_dashboard.html" %}
+{% load static %}
+{% load humanize %}
+
+
+{% block content %}
+<div class="row">
+    <di class="col-12">
+        {% for message in messages %}   
+        <p style="text-align: center; color:white;"   
+            {% if message.level_tag == 'info' %} 
+            class="col-12 bg-success"  
+            {% else %} 
+            class="col-12 bg-danger" 
+            {% endif %} >
+                {{message}}
+            </p>
+        {% endfor %}
+    </di>
+    
+    
+    <div class="col-12 col-md-4">  
+
+        <br />
+<p style="cursor: pointer;" data-bs-target="#add-expense-form" data-bs-toggle="collapse">
+    <span style="border:1px solid black; border-radius: 4px; padding: 8px;">
+   <b> Add Expense</b> <i class="fa fa-angle-down btn btn-danger btn-sm"></i>
+</span>
+</p>
+
+
+
+<form method="POST" action="{% url 'expenses' %}" class="collapse" id="add-expense-form">
+    {% csrf_token %}
+<table style="width:100%;">
+    <tr>
+    <td><label style="width:100%; line-height: 35px;">Item Name</label>
+        <select name="itemID" style="width:100%; line-height: 35px;">
+            <option value="NA">--</option>
+            {% for item in item_expense_list %}
+            <option value="{{item.id}}">{{item.item_name}}</option>
+            {% endfor %}
+        </select>
+    </td>
+    </tr>
+
+    <tr>
+            <td>
+            <label style="width:100%; line-height: 35px;">Description</label>
+            <textarea style="border: 1px solid black; width:100%; line-height: 35px;" name="description"></textarea>
+            </td>
+    </tr>
+
+    <tr>
+  
+        <td>
+            <label style="width:100%; line-height: 35px;">Money Source</label>
+            <select name="money-sourceID" style="width:100%; line-height: 35px;">
+            <option value="NA">--</option>
+            {% for money_source in ALL_MONEY_SOURCES %}
+            <option value="{{money_source.settings_name}}">{{money_source.money_source_name}}</option>
+            {% endfor %}
+            </select></td>
+    </tr>
+    <tr>
+            <td><label style="width:100%; line-height: 35px;">PayID NO.</label>
+                <input  style="border: 1px solid black; width:100%; line-height: 35px;" type="text" name="pay-number" placeholder="PayID Number"></td>
+    </tr>
+    <tr>
+        <td>
+        <label style="width:100%; line-height: 35px;">Amount</label>
+        <input style="border: 1px solid black; width:100%; line-height: 35px;" type="number" name="amount" />
+       </td>
+
+     </tr>
+</table>
+    <button class="btn btn-sm btn-primary">Submit</button>
+</form>
+
+</div>
+
+<div class="col-12 col-md-8">
+    <h1>Expense List</h1>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <b>From:</b> <input type="date" name="date1" required placeholder="From:">
+        <b>To:</b> <input type="date" name="date2" required placeholder="To:">
+        <button type="submit" class="btn btn-sm btn-primary">Load</button>
+    </form><br/>
+
+    <p><b>Total:</b> <i>{{total | floatformat:0 | intcomma }}</i></p>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <td>:::</td>
+                <td>Record Date</td>
+                <td>Money Source</td>
+                <td>Description</td>
+                <td>Amount</td>
+                <td>Recording User</td>
+            </tr>
+        </thead>
+
+        <tbody>
+        
+            {% for expense in expense_list %}
+            <tr>
+                <td>
+                    <span style="cursor:pointer;"
+                    data-bs-target="#del-expsenseID-{{expense.id}}" data-bs-toggle="collapse">&#128465;</span>
+                                
+                    <br />
+                   <form action="" method="POST" class="collapse" id="del-expsenseID-{{expense.id}}" >
+                       {% csrf_token %}
+                       <input type="hidden" name="del-expenseID" value="{{expense.id}}" />
+                       <button class="btn btn-sm btn-danger">Delete</button>
+
+                   </form>
+                </td>
+                <td>{{expense.record_date}}</td>
+                <td>{{expense.money_sourceID}}</td>
+                <td>{{expense.item_name }}</td>
+                <td>{{expense.expense_made | floatformat:0 | intcomma }}</td>
+                <td>{{expense.userID}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        <tfoot>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td colspan="3"><b>Total:</b> <i>{{total | floatformat:0 | intcomma }}</i></td>
+        </tfoot>
+
+    </table>
+</div>
+</div>
+
+{% endblock %}

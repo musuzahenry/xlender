@@ -1,0 +1,65 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="row">
+    
+    <h2 style="padding-top: 3px; margin-top: 10px;"class="col-12 col-md-4">
+
+    <a href="{% url 'main:list-security' %}"  class="btn-success text-white btn btn-sm">
+        <i class="fa fa-arrow-left"></i>&nbsp;Back</a>
+
+        &nbsp;{{ request.session.current_client_fullname}}</h2>
+    <h3 style="padding-top: 3px;"class="col-12 col-md-8">LoanID: {{request.session.current_loanID}}</h3>
+
+    
+    <div class="col-12 col-md-6">
+        <a href="{% url 'main:security-image' %}">
+            <button class="btn-danger text-white">Set Security Image</button>
+        </a>
+
+        <p style="text-align: center;">
+
+        <img style="width:90%; margin-top: 10px;" 
+        src="{% get_media_prefix %}{{image}}" alt="Security Image">
+ 
+        </p>
+        
+        <a style="font-size: 10px; text-decoration: underline;"
+        target="_blank" href="{% get_media_prefix %}{{image}}">
+        <h3 style="width:200px;">{{image}}</h3></a>
+ 
+    </div>
+    
+    <div class="col-12 col-md-6">
+      <div class="row">
+        <h1 class="col-12">Edit Security Details</h1>
+        <form method="POST" action="edit-security" class="col-12" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <input class="col-12" type="hidden"  name="edit-security" Value="add-security">
+        <input class="col-12" type="hidden"  name="securityID" Value="{{securityID}}">
+
+        <label class="col-12" for="security-name">Security Item Name</label>
+        <input class="col-12" type="text"  name="security-name" Value="{{security_name}}">
+         
+        <label class="col-12" for="security-address">Address</label>
+        <input class="col-12" type="text"  name="security-address" Value="{{security_address}}">
+
+
+        <label class="col-12 " for="estimated-value">Estimated Value</label>
+        <input class="col-12" type="text"  name="estimated-value" Value="{{estimated_value}}">
+
+         <br>
+        <input style="width:80px; margin-top: 3px;"class="col-12" type="Submit"  Value="Save">
+    </form>
+    </div>
+</div>
+
+
+</div>
+
+{% endblock %}

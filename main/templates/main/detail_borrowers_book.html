@@ -1,0 +1,149 @@
+
+{% extends 'main/base.html' %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content%}
+
+{% if user.is_authenticated %}
+
+
+
+
+<div class='row'>
+    <h1 class="col-12">Sold Books Report</h1>
+    <p class="col-12">
+        <form class="form-inline" method="POST" action="{% url 'main:view-sold-books' %}">
+            {% csrf_token %}
+            <select  name="station-id" id="station">
+                <option  value="0">Choose Station</option>
+                {% for station in get_global_db_objects.stations %}
+                    <option value="{{station.id}}">{{station.station_name}}</option>          
+                {% endfor %}
+            </select>&nbsp;
+            <input type="date" name="date1" placeholder="yyyy-mm-dd" required>&nbsp;
+            <input type="date" name="date2" placeholder="yyyy-mm-dd" required>
+            <button class="btn btn-sm btn-info text-white" type="submit">Load</button>
+        </form>
+        </p>
+
+</div>
+
+
+
+<div class='row'>
+
+    {% if request.POST.date1 %}
+    <p class="col-12"><b>From:</b> {{request.POST.date1}} <b>To:</b> {{request.POST.date2}} </p>
+    {% else %}
+    <p class="col-12">Today's Report  </p>
+    {% endif %}
+    <div class="col-12"><button class="export-to-excel btn btn-sm btn-info text-white">Export To Excel</button></div>
+ 
+    <table class="table table-bordered table-striped" id="details">
+        <thead class="bg-dark text-white">
+            <tr>
+                <td>Details</td>
+                <td>Record Date</td> 
+                <td>Amount</td> 
+                <td>User</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in details_list  %}
+            <tr>
+                <td>
+                    <form method="POST" class="form-inline loan-list-button" 
+                           action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                               {% csrf_token %}
+                               <input type="hidden" name="set-loan-id" value="{{book.loanID.id}}">
+                           <button style="background: transparent; border:0px; cursor: pointer;
+                           text-decoration: underline;"type="submit"class="text-info"
+                           style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                            border: 0px transparent; cursor: pointer;">
+                    {{book.stationID}}
+                </button>
+                </form>
+                </td> 
+                <td>
+                    <form method="POST" class="form-inline loan-list-button" 
+                    action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="set-loan-id" value="{{book.loanID.id}}">
+                    <button style="background: transparent; border:0px; cursor: pointer;
+                    text-decoration: underline;"type="submit"class="text-info"
+                    style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                     border: 0px transparent; cursor: pointer;">                   
+                    {{book.record_date}}
+                </button>
+            </form>
+                </td> 
+                <td>
+                    <form method="POST" class="form-inline loan-list-button" 
+                    action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="set-loan-id" value="{{book.loanID.id}}">
+                    <button style="background: transparent; border:0px; cursor: pointer;
+                    text-decoration: underline;"type="submit"class="text-info"
+                    style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                     border: 0px transparent; cursor: pointer;">
+                    {{book.borrowers_book | floatformat:1 | intcomma }}
+                </button>
+            </form>
+                </td> 
+                <td>
+                    <form method="POST" class="form-inline loan-list-button" 
+                    action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="set-loan-id" value="{{book.loanID.id}}">
+                    <button style="background: transparent; border:0px; cursor: pointer;
+                    text-decoration: underline;"type="submit"class="text-info"
+                    style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                     border: 0px transparent; cursor: pointer;">
+                    {{book.userID}}
+                </button>
+            </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody
+        
+        <tfoot>
+            <tr class="bg-dark text-white">
+                <td></td>
+            <td>
+            Count: {{detail_count}} 
+            </td>
+            <td colspan="2">
+            Total Amount: {{ detail_total_amount | floatformat:0 | intcomma }}
+            </td>
+            </tr>
+
+        </tfoot>
+
+    </table>
+</div>
+
+
+{% endif %}
+
+
+
+<script>
+    $(".export-to-excel").click(function(){
+       $("td").find("input").remove("input")
+       $("td").find("label").remove("label")
+       $("td").find("i").remove("i")
+       $("#details").table2excel({  
+    exclude: "",
+    name: "Worksheet Name",
+    filename: "details.xls", // do include extension
+    preserveColors: true // set to true if you want background colors and font colors preserved
+})
+       
+
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,44 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+
+{% if user.is_authenticated %}
+
+<div class="row">
+
+
+
+
+
+<h1>Paid Salaries</h1>
+<table class="table table-bordered table-striped">
+    <thead>
+        <td>Pay Date</td>
+        <td>Full Name</td>
+        <td>Amount</td>
+    </thead>
+{% for salary in paid_salaries %}
+<tr>
+    <td></td>
+    <td></td>
+    <td></td>
+</tr>
+{% endfor %}
+<tfoot>
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+</tfoot>
+</table>
+
+
+
+</div><!--- Closing this page opening div -->
+{% endif %}
+{% endblock %}

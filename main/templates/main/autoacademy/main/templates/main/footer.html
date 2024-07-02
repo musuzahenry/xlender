@@ -1,0 +1,26 @@
+{% load static %}
+
+
+
+<div style="margin-top: 50px !important;"></div>
+
+<div  
+style=" width:100%; background: rgb(24, 54, 94); font-size:11px;  color:white; position: absolute; bottom:0; left:0; ">
+
+<div class="col-12" style="margin: 3px;">
+    <p style="text-align: center; margin: 3px;">UserID: #{{request.user.id}} Current User: {{request.session.current_user_fullname }}, Current Campus: {{request.session.current_campus_name}} </p>
+</div>
+    <div class="col-12">
+        <p style="text-align: center;">Copyright &copy; 2023 AutoAcademy, DTL(U) LTD +256 756632338, datcomteltec@gmail.com</p>
+    </div>
+</div>
+
+</div><!-- closes site wrppaer div-->
+
+ <!-- bootstrap js-->
+ <script type="text/javascript" src="{% static 'all/bootstrap.js' %}" ></script> 
+ <script type="text/javascript" src="{% static 'all/style.js' %}" ></script>
+
+ </div><!-- Closes main wrapper div -->
+</body>
+</html

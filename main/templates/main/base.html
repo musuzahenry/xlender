@@ -1,0 +1,23 @@
+<!-- Header-->
+{% include "main/header.html" with business_name=business_name business_logo=business_logo %}
+<div class="col-sm-12" >
+<div class="row" style="min-height: 80%;">
+
+
+    <div class="col-sm-12">
+       
+            {% block content %}
+       
+            {% endblock %}
+        
+
+    </div> 
+
+</div>        
+</div>
+<!-- Footer -->
+{% include "main/footer.html" %}
+
+
+
+

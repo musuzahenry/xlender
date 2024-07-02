@@ -1,0 +1,344 @@
+
+
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+<!--Anything under block content will be displayed  -->
+{% block content %}
+
+
+
+
+{% if user.is_authenticated %}
+
+    <form action="{% url 'main:search-for-a-client' %}" class="row pat-search-form" method="POST">
+
+           <div class="col-md-3"></div>
+           <div class="col-10 col-md-6" style="padding: 0px; padding-left:5px;">
+           {% csrf_token %}
+           <input type="text" name="client-search" placeholder="*Names|contacts|NIN or clientID*">
+           </div>
+           <div class="col-1 col-md-1" style="padding: 0px;">
+           <p style="text-align: left;">
+           <button  class="btn btn-sm btn-primary btn-info" type="Submit"><i  class="fa fa-angle-right"></i></button>
+           <p> 
+           </div>
+ 
+   </form>
+
+   <div class="row"> <!-- Spans Client and Loans-->
+  
+       <div class="col-12 col-md-6" style="margin-bottom: 10px;"><!-- Spans Client -->
+
+       <div class="row">
+
+        <h2 class="col-12">   
+            <span 
+            style="cursor: pointer; border-bottom:1px solid #5bc0de; padding-top:5px; padding-bottom: 5px; border-radius: 5px;"> 
+                &nbsp; &rarr; &nbsp;
+            </span> &nbsp;
+            Client Details</h2>
+       <p class="col-12"> <span><strong>{{request.session.current_clientID}}</strong></span> 
+        <span>{{request.session.current_client_fullname}}</span> 
+       </p>
+       <div class="col-12" >
+           <table id="front-i-navigation" style="margin-top: -10px;"><tr>
+           <!--Go previous client -->
+           <td><a class="btn btn-sm btn-primary btn-info" href="{% url 'main:set-prev-client' %}">  
+            <i class="fa fa-angle-double-left fa-2x"></i> </a> </td>
+           <!--Edit client -->
+           <td></a> 
+            <form  class="form-inline" style="margin: 0; padding: 0;"
+            method="POST" action="{% url 'main:edit-client' %}"> 
+            {% csrf_token %}
+            <input type="hidden" name="edit-client" value="edit-client">
+           <button class="btn btn-sm btn-primary btn-success" type="Submit">
+            <i class="fa fa-pencil fa-2x" ></i> </button>
+           </form>
+        </td>
+           <!--Add special client -->
+           <td> 
+            &nbsp;  <i class="fa fa-chevron-down fa-2x" data-target="#edit-client" data-toggle="collapse">
+            </i> &nbsp;
+        </td>
+           <!--Add  client -->
+   
+           <td><form  class="form-inline" style="margin: 0; padding: 0;"
+             method="POST" action="{% url 'main:add-client' %}">
+            {% csrf_token %}
+             <button class="btn btn-sm btn-primary btn-danger" type="Submit"><i class="fa fa-plus fa-2x"></i></button>
+           </form></td>
+            
+           <!--Go next client --> 
+           <td><a href="{% url 'main:set-next-client' %}" class="btn btn-sm btn-primary btn-info">
+            <i class="fa fa-angle-double-right fa-2x"></i> </a></td> 
+
+           </tr>
+           </table>
+                         
+        </div> 
+   <div  class="col-12 client-loan-div" >
+    
+       <div class="row" >
+       <div class="collapse" id="edit-client">
+        
+       <form method="POST" action="{% url 'main:add-client' %}">
+        {% csrf_token %}
+           <legend class="col-12"style="font-size:14px;font-weight: bold;">Add Client</legend>      
+           <input type="hidden" value="0" name="stationID"> 
+           <select   class="col-10" name="client-typeID" id="client-typeID">
+               <option  value="{{request.session.default_client_typeID}}">--</option>
+               {% for client_type in get_global_db_objects.client_types %}
+                   <option value="{{client_type.id}}">{{client_type.client_type_name}}</option>          
+               {% endfor %}
+           </select>
+           <p class="col-12">
+           <button style="margin-top:4px;"stype="submit"><i class="fa fa-plus"></i></a>Submit</button>
+           </p>
+        </form>
+       </div>
+       </div>
+   </div>
+
+ </div>
+</div>
+  
+
+
+  
+ <div class="col-12 col-md-6" ><!-- Spans Loan -->
+   <div class="row">
+    <h2 class="col-12" style="margin-top: 10px;">
+        <span data-target="#old-loan" data-toggle="collapse"
+        style="cursor: pointer; border:1px solid #5bc0de; padding-top:5px; padding-bottom: 5px; border-radius: 5px;"> 
+            &nbsp; <i class="fa-solid fa-door-open"></i> &larr;
+        </span> &nbsp;
+        <a  id="old-loan"class="col-12 collapse" style="cursor: pointer; margin-bottom: -25px;" 
+        href="{% url 'main:old-loan' %}"><span >
+           
+            <p>Register Old Loan </span>
+           <i class="fa btn btn-info text-white"style="border-radius: 5px; line-height:25px;">+</i>
+            </p>&nbsp;      
+       </a>
+        Loan Details
+    </h2>
+
+    <div class="col-12 client-loan-div">
+        <p style="margin-bottom: -4px;"><b>Add Loan</b></p>
+        <form method="POST"  action="{% url 'main:add-loan' %}">
+            {% csrf_token %}
+            
+            <label class="col-8 col-md-10" for="loan-typeID">Loan Type </label>
+
+                <input type="hidden" value="0" name="stationID">           
+                <select class="col-8 col-md-10"  name="loan-typeID" id="loan-typeID">
+                    <option  value="{{request.session.current_loan_typeID}}">{{request.session.current_loan_type_name}}</option>
+                    {% for loan_type in get_global_db_objects.loan_types %}
+                        <option value="{{loan_type.id}}">{{loan_type.loan_type_name}}</option>          
+                    {% endfor %}
+                </select> 
+                <button style="margin-top: -5px;" 
+                  class="btn btn-danger text-white" type="Sunmit">
+                 <i class="fa fa-plus fa-2x"></i>
+             </button>
+        </form>
+    </div>
+
+    <table class="table-striped table-bordered col-12" style="font-size:14px;">
+        {% if request.session.current_loanID %}
+
+        <tr><td>
+            <a href="{% url 'main:manually-add-book' %}">
+                <button class="btn btn-sm btn-info text-white">
+                 <i class="fa fa-book"></i>&nbsp;Add Book
+                </button>
+            </a>
+        </td>
+        <td>
+            <span class='btn' style="cursor: pointer; font-size:11px; font-weight: bold;" data-target="#edit-book" data-toggle="collapse">
+            <i class="fa fa-pencil"></i>&nbsp;
+            Borrower's Book: {{request.session.current_borrowers_book_record}} 
+            / {{request.session.records_in_borrowers_book}}
+            </span>
+            <form method="POST" action="" class="form form-inline collapse" id="edit-book">
+            {% csrf_token %}
+            <input type="hidden" name="edit-client-rows" value="{{request.session.current_clientID}}">
+            <textarea class='col-10' name='adjust-reason' placeholder='Enter Reason' required></textarea>
+            <input class='col-10' type="number" name="no-of-rows" placeholder="Remaining spaces" required>
+            <input type="submit" value="Submit">
+        </form>
+        </td>
+        </tr>
+        <tr><td>
+            <a href="{% url 'main:edit-loan' %}" style="color:rgb(41, 41, 41);" class="btn btn-sm">
+                <i class="fa fa-pencil"></i> &nbsp; 
+                {{request.session.loan_type_name}} | LoanID: {{request.session.current_loanID}}</a>
+        </td>
+        <td>Date(Y-m-d): {{request.session.loan_record_date}}</td>
+        </tr>
+        <tr>
+            <td>Principle: {{request.session.principle | floatformat:1| intcomma }}</td>
+            <td>Original Balance: {{request.session.original_balance | floatformat:1| intcomma }}</td> 
+            
+        </tr>
+        <tr><td>Total Paid: {{request.session.loan_total_paid | intcomma}}</td> 
+            <td>
+                <span class='btn' style="cursor:pointer; font-size: 14px;" data-target="#edit-fine-totals{{request.session.current_loanID}}" data-toggle="collapse">
+                    <i class="fa fa-pencil"></i> &nbsp;
+                Fines: {{request.session.total_fines | floatformat:1| intcomma }} | Fines Automatic: {{request.session.auto_fines}}</span>
+                <form method="POST" action="" class="form form-inline collapse" 
+                id="edit-fine-totals{{request.session.current_loanID}}">
+                    {% csrf_token %}
+                    <input type="hidden" name="edit-total-fines" value="edit-total-fines">
+                    <input type="hidden" name="loan-id" value="{{request.session.current_loanID}}">
+                    <input class='col-8' type="number" name="total-fines" required>
+                    <input class="btn btn-sm" type="submit" value="Submit">
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span class="btn btn-sm" 
+                style="cursor: pointer;" data-target="#loan-balance-edit{{request.session.current_loanID}}" data-toggle="collapse">
+                    <i class="fa fa-pencil"></i> &nbsp; Balance:  {{request.session.current_balance | floatformat:1| intcomma }}
+                </span>
+
+                <form action="" method="POST" class="form form-inline collapse" id="loan-balance-edit{{request.session.current_loanID}}">
+                    {% csrf_token %}
+                    <input type="hidden" name="adjust-loan-balance" value="adjust-loan-balance">
+                    <input type="hidden" name="loan-id" value ="{{request.session.current_loanID}}">
+                    <input type="hidden" name="loan-current-balance" value="{{request.session.current_balance}}">
+                    <input type="number" name="loan-balance" value="0" required>
+                    <input class="btn btn-sm" type="submit" value="Submit">
+                </form>
+            </td>
+            <td>Approved: {{request.session.approve_status}} 
+                 Disbursed:  {{request.session.disburse_status}}</td>
+        </tr>
+        {% endif %}
+    </table>
+  
+       <div class="col-12"> 
+        <div  id="loan-navigation">
+                     
+         <div style="margin:0px; margin-bottom:3px; padding:0px;">
+            {% for loan in loan_list %}
+            <form method="POST" class="form-inline loan-list-button" 
+            action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                {% csrf_token %}
+                <input type="hidden" name="set-loan-id" value="{{loan.id}}">
+                <button type="submit"class="bg-white text-info"
+                style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                 border: 0px transparent; cursor: pointer;">{{loan.id}}</button>
+             </form>
+            {% endfor %}
+         </div>
+            
+        <table class="front-i-navigation">
+            <tr> 
+           <!--Go previous loan -->
+           <td><a href="{% url 'main:set-prev-loan' %}" class="btn btn-sm btn-primary btn-info"> 
+            <i class="fa fa-angle-double-left fa-2x"></i> </a> </td>
+           <!--Edit loan -->                
+           <td><a href="{% url 'main:edit-loan' %}" class="btn btn-sm btn-primary btn-success">
+            <i class="fa fa-pencil fa-2x"></i></a></td> 
+           <!--Go next --> 
+           <td><a href="{% url 'main:set-next-loan' %}" class="btn btn-sm btn-primary btn-info"> 
+            <i class="fa fa-angle-double-right fa-2x"></i> </a></td>
+
+            <td><a data-toggle="collapse" data-target="#send-to-court" 
+                class="btn btn-sm btn-primary btn-danger text-white"> 
+                <i class="fa fa-pen-to-square fa-2x"></i> 
+                <span style="font-size:11px;">Add To Court Queue</span></a> </td>      
+           </tr>
+        </table>
+
+        <div id="send-to-court" class="collapse">
+
+            <form style="width:100%" method="POST" action=""> 
+            {% csrf_token %}
+            <input type="hidden" name="send-client-to-court" value="1">
+
+            <label style="min-width:300px">Current Loan Balance</label><br/>
+            <input  style="min-width:300px" type="number" name="current-total-balance" 
+            value="{{request.session.current_client_balance | floatformat:0}}" required>
+            
+            <label style="min-width:300px">Total Expenses Made For Court</label><br/>
+            <input  style="min-width:300px" type="number" name="total-court-expenses" value="0" required>
+            <label  style="min-width:300px">Demand Notice</label><br/>
+            <input  style="min-width:300px" type="text" name="demand-notice" required>
+
+            <label  style="min-width:300px">Notes</label><br/>
+            <textarea  style="min-width:300px" name="more-notes" required placeholder="Please Add Some Notes"></textarea><br />
+
+            <button style="margin-top: 5px;"
+            type="submit" class="btn btn-sm btn-info"> <i class="fa fa-plue"></i>Submit</button>
+
+            </form>
+
+        </div>
+    </div>
+    </div>
+
+
+
+    </div>
+   </div>
+
+   {% if user.is_authenticated %}
+   
+<p class="text-danger col-12" style="padding:0px !important; text-align: center;">
+   {{warning_message}}
+   </p>
+ 
+    {% for message in messages %}
+    <p class="bg-info text-white col-12" style="width:100% !important; text-align: center;"> {{message}} </p>
+    {% endfor %}
+
+
+   <div class="col-12">
+
+     <!--- Source code for paying -->
+    {% include "main/loan_view_monthly_pay.html" with interest_book=interest_book cash_book=cash_book added_fines=added_fines  %}
+
+    <br>
+     
+   <p style="font-size: 9px;"><strong>All Time Balance: </strong>
+       <i class="fa fa-pencil" data-target="#edit-all-balance" data-toggle="collapse"></i>&nbsp; 
+       <span class="bg-danger" style="color:white; padding: 5px;">{{request.session.current_client_balance | floatformat:0 | intcomma}}</span></p>
+   
+    <form  class="form-inline collapse" style="margin: 0; padding: 0;"
+     method="POST" action="{% url 'main:index' %}" id="edit-all-balance">
+    {% csrf_token %}
+    <input type="number" name="all-balance" required>
+     <button class="btn btn-sm btn-primary btn-danger" type="Submit">Submit</button>
+   </form>
+
+   
+    </div>
+   {% endif %}
+
+
+   </div>
+
+   {% else %}
+         
+   <div class="col-12">
+    <div class="row">
+       <div class="col-12 col-md-4"></div>
+       <div class="col-12 col-md-4">
+       <p class="business-logo"><img src="{% get_media_prefix %}{{request.session.business_logo}}" alt="{{business_name}} logo"></p>
+       <h1 class="welcome-heading">{{request.session.business_name}}</h1>
+       <p class="tagline">"{{request.session.business_tagline}}"</p>
+       {% include "main/login.html" with form=form %}
+       <p class="bg-danger" style="color:white; text-align: center;">{{message }}</p>
+    </div>
+    <div class="col-12 col-md-4"></div>
+   </div>
+</div>
+{% endif %}
+
+<!--Ends block content-->
+{% endblock %}

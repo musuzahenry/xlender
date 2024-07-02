@@ -1,0 +1,68 @@
+
+
+
+{% extends "main/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<!-- Open block content-->
+<br>
+<h5>SEARCH RESULTS</h5>
+
+ <table class="table table-stripped">
+<thead><tr><th>ClientID</th><th>Fullname</th><th>All Time Balance</th><th>Contacts</th><th>NIN</th></tr></thead>
+ 
+{% for client in clients_byid %}
+ <!--By contacts-->
+<tr>
+    <td> <a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.id}}</a> </td>
+    <td><a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.full_name}}</a></td>
+    <td><a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.current_total_balance}}</a> </td>
+    <td><a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.contact_numbers}}</a></td>
+    <td>{{client.national_identification_number}}</td>
+</tr>
+ {% endfor %}
+ 
+ {% for client in clients_by_fullnames %}
+  <!--By fullnaes-->
+    <tr>
+        <td> <a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.id}}</a> </td>
+        <td><a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.full_name}}</a></td>
+        <td><a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.current_total_balance}}</a> </td>
+        <td><a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.contact_numbers}}</a></td>
+        <td>{{client.national_identification_number}}</td>
+    </tr>
+ {% endfor %}
+
+ {% for client in clients_by_NIN %}
+ <!--By fullnaes-->
+   <tr>
+       <td> <a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.id}}</a> </td>
+       <td><a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.full_name}}</a></td>
+       <td><a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.current_total_balance}}</a> </td>
+       <td><a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.contact_numbers}}</a></td>
+       <td>{{client.national_identification_number}}</td>
+   </tr>
+{% endfor %}
+
+{% for client in clients_by_contacts %}
+<!--By fullnaes-->
+  <tr>
+      <td> <a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.id}}</a> </td>
+      <td><a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.full_name}}</a></td>
+      <td><a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.current_total_balance}}</a> </td>
+      <td><a href="{% url 'main:search-for-a-client' %}/{{client.id}}">{{client.contact_numbers}}</a></td>
+      <td>{{client.national_identification_number}}</td>
+  </tr>
+{% endfor %}
+
+
+</table>
+
+
+
+
+<!--Close block content-->
+{% endblock %}
+

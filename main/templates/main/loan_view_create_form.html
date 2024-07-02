@@ -1,0 +1,65 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<!-- Open block content-->
+
+
+
+<form action="add-loan" class="row" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h1 class="col-12">{{ request.session.current_client_fullname }}</h1>
+    <h2 class="col-12">Add Loan</h2>
+
+    <!--Hidden attributes-->
+    <input type="hidden" value="actual-add-loan" name="actual-add-loan">
+    <input type="hidden" value="{{loan_typeID}}" name="loan-typeID">
+    <input type="hidden" value="{{stationID}}" name="stationID">
+  
+        <div class="row">
+
+            <div class="col-12 col-md-12">
+                
+                <div id="loan-details" >  
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                        <label class="col-12" for="principle">Principle</label>
+                        <input class="col-12" type="number"  name="principle" id="principle" required>
+                        <label class="col-12" for="interest-rate">Interest(%100)</label>
+                        <input class="col-12" type="number"  name="interest-rate" {{interest_percent}}
+                        value="{{interest_percent}}">
+                        <label class="col-12" for="loan-duration">Loan Duration</label>
+                        <input class="col-12" type="number" value="{{request.session.default_loan_duration}}"
+                         name="loan-duration" {{request.session.allow_to_change_loan_duration}}>
+
+
+                        <label class="col-12" for="pay-methodID">Pay Method</label>                  
+                            <select class="col-12"  name="pay-methodID" id="pay-methodID" required>
+                            {% for pay_method in get_global_db_objects.pay_methods %}
+                                <option value="{{pay_method.id}}">{{pay_method.pay_method_name}}</option>          
+                            {% endfor %}
+                        </select> 
+                        <label class="col-12" for="pay-medium">Pay Medium</label>
+                        <input class="col-12" type="text"  name="pay-medium">
+                        <label class="col-12" for="pay-identification">Pay Identification</label>
+                        <input class="col-12" type="text" name="pay-identification">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-12">
+                <input style="padding:7px; width:80px; margin-top:20px;" type="Submit" value="Submit">   
+            </div>
+            
+        </div>
+    </div>
+
+  
+</form>
+
+
+<!--Close block content-->
+{% endblock %}
+

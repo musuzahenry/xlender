@@ -1,0 +1,98 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+
+{% if user.is_authenticated %}
+
+<div class="row">
+
+
+        {% for message in messages %}
+        <p class="bg-success text-white col-12" style="width:100% !important; text-align: center;">
+        {{message}}
+        </p>
+        {% endfor %}
+
+
+
+<div class="col-12 col-md-4"></div>
+
+    <h1 class="col-sm-12">{{title}}</h1>
+
+
+    <table class="table table-striped table-bordered">
+        <thead class="bg-info text-white">
+            <tr>
+                <td>Station Name</td> 
+                <td>Address</td>          
+                <td>Rent Payment Day</td>
+                <td>Rent Period</td> 
+                <td>Rent</td>  
+                <td>Pay Rent</td>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for station in stations %}
+            <tr>
+                <td>
+                       {{station.station_name }} 
+                </td> 
+                <td>
+                    {{station.physical_adress}}
+                </td> 
+                <td>
+                    {{station.day_for_rent_payment}}
+                </td>
+                <td>
+                    {{station.duration}}
+                </td> 
+
+                <td>
+                    {{station.rent | intcomma }}
+                </td>
+
+                <td>
+                    <button class="btn btn-sm btn-success text-white" data-target="#pay-delform{{station.id}}" data-toggle="collapse"
+                    ><i class="fa fa-check fa-beat-fade"></i>&nbsp; Pay Now</button>
+                    <form action="" method="POST" 
+                    id="pay-delform{{station.id}}" class="form-inline collapse tbl-edit-form">
+                    {% csrf_token %}
+                        <input type="hidden" name="pay-rent-id" value="{{station.id}}">
+                        <input type="hidden" name="inc-exp-add" value="inc-exp-add">
+                        <input type="hidden" name="pay-method-id" value="1">
+                        <input type="hidden" name="supper-typeID" value="2">
+                        <input type="hidden" name="cat-name" value="rent">
+                        <input type="number" name="amount" value="{{station.rent | floatformat}}">       
+                        <input style="margin-top: 2px;"type="submit" class="btn btn-sm btn-info" value="Submit">
+
+                     </form>
+                    
+                </td> 
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        <tfoot  class="bg-dark text-white">
+            <tr>
+                <td></td> 
+                <td></td> 
+                <td></td> 
+                <td></td> 
+                <td></td> 
+                <td></td> 
+            </tr>
+        </tfoot>
+
+    </table>
+    
+</div>
+
+
+{% endif %}
+{% endblock %}

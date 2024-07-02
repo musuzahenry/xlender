@@ -1,0 +1,35 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+
+<div class="row"> <!-- Spans Client and Loans--> 
+
+{% if user.is_authenticated %}
+
+
+<div class="col-12" >
+
+<h1>Roles / Groups</h1>
+<table class="table table-striped">
+    <thead class="bg-dark text-white"><tr><td>GroupID</td><td>Group Name</td></tr></thead>
+
+    <tbody>
+    {% for group in groups %}
+    <tr><td>
+        <a href="{% url 'edit-group-rights' group.group_name %}">{{group.id}}</a></td><td>
+        <a href="{% url 'edit-group-rights' group.group_name %}"> {{group.group_user_friendly_name}} </a></td></tr>
+    {% endfor %}
+  </tbody>
+  <tfoot class="bg-dark text-white"><tr><td></td><td></td></tr></tfoot>
+</table>
+
+
+
+</div>
+{%  endif %}
+</div>
+{% endblock %}

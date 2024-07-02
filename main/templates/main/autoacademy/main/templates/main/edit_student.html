@@ -1,0 +1,149 @@
+
+{% extends 'main/bursar_dashboard.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<h2>Add Student</h2>
+
+{% for message in messages %}
+<p class="bg-info" style="text-align: center;">{{message}}</p>
+{% endfor %}
+
+<div class="col-md-8">
+<form method="POST" enctype="multipart/form-data" class="row">
+    {% csrf_token %}
+
+    <input type="hidden" name="edit-student" value="0" >
+
+    <div class="col-md-3">   
+      <p style="text-align: center; margin-bottom: -2px;"><b>STUDENT IMAGE</b></p>
+      <p style="text-align: center;">
+        <img style="width:150px; height: 150px; border:1px solid black; border-radius: 5px;"
+        src="{% get_media_prefix %}{{current_student.student_image}}" style="width:100%; min-height: 10px;"
+        alt="{{current_student.surname}} {{current_student.firstname}} {{current_student.othernames}}">
+        </p>
+
+        <input style="border-bottom: 0px;" type="file" name="student-image" id="student-image">
+    </div>
+
+   <div class="col-12 col-md-9">
+
+    <div class="row">
+    <h3  style="cursor: pointer;" data-bs-target="#student-info" data-bs-toggle="collapse"
+    class="col-12">Student Info <i class="fa fa-angle-down btn btn-primary btn-sm"></i></h3>
+    </div>
+
+    <div class="row collapse show" id="student-info">
+      <div class="col-12 col-md-6">
+        <div class="row"  style="padding:5px;">
+    <label class="col-12" for ="surname">Surname</label>
+    <input class="col-12" type ="text" name="surname" id="surname" value="{{current_student.surname}}" required>
+    <label class="col-12" for="firstname">First Name</label>
+    <input class="col-12" type ="text" name="firstname" id="firstname" value="{{current_student.firstname}}" required>
+    <label class="col-12" for="othernames">Other Names</label>
+    <input class="col-12" type ="text" name="othernames" id="othernames" value="{{current_student.othernames}}"> 
+      </div>
+    </div>
+    
+    <div class="col-12 col-md-6">
+      <div class="row" style="padding:5px;">
+
+   <label class="col-12" for="gender">Gender</label>
+   
+   <select name="gender" id="gender">
+      {% if current_student.gender == "M" %}
+      <option value="{{current_student.gender}}">Male</option>
+      {% else %}
+      <option value="{{current_student.gender}}">Female</option>
+      {% endif %} 
+      <option value="M">Male</option>
+      <option value="F">Female</option>
+   </select>
+
+    <label class="col-12" for="status">Status</label>
+    <select class="col-12" name="status" id="status" required>
+        <option value="{{current_student.student_typeID.settings_name}}">{{current_student.student_typeID}}</option>
+        {% for status in STUDENT_TYPES %}
+          <option value="{{status.settings_name}}">{{status.student_type_name}}</option>       
+        {% endfor %}
+    </select>
+              
+    <label class="col-12" for="dob">Date Of Birth (YYYY-MM-DD)</label>
+    <input class="col-12" type ="text" value="{{date_of_birth}}" name="dob" id="dob" >
+
+    <label class="col-12" for="student-no">Student No:</label>
+    <input class="col-12" type ="text" name="student-no" value="{{current_student.student_NO}}" id="student-no">
+  </div>
+  </div>
+
+     </div><!-- closes inner wrapper -->
+  
+     </div><!-- Closes student div wrapper -->
+
+     <div class="col-12">
+      <button class="btn btn-primary btn-sm" type="Submit">Submit</button>
+      </div>
+
+    </form>
+</div>
+
+    <div class="col-12 col-md-4" style="overflow: scroll;">
+
+      <div class="row">
+        <h3 data-bs-target="#edit-parent-info" data-bs-toggle="collapse"
+            class="col-12">Parent Info <i class="fa fa-angle-down btn btn-primary btn-sm"></i></h3>
+        </div>
+
+  <div id="edit-parent-info" class="collapse show" 
+  style="background: rgb(231, 248, 250); padding:15px; border-radius: 5px;">
+  {% for parent in student_parents %}
+  <form method="POST" action="">
+    {% csrf_token %}
+
+    <input type="hidden" name="posted-parentID" value="{{parent.parentID.id}}">
+
+    <p style="margin-bottom: -2px;"><b>{{parent.relation_to_student}}</b></p>
+
+    <div class="row" >
+      <div class="col-12 col-md-6">
+        <div class="row" style="padding:5px;">
+    <label class="col-12" for ="parent-surname">Parent Surname</label>
+    <input class="col-12" type ="text" value="{{parent.parentID.surname}}"
+    name="parent-surname" id="parent-surname" required>
+
+    <label class="col-12" for="parent-firstname">Parent First Names</label>
+    <input class="col-12" type ="text" value="{{parent.parentID.firstname}}"
+    name="parent-firstname" id="parent-firstname" required>
+    </div>
+    </div>
+
+
+    <div class="col-12 col-md-6">
+      <div class="row" style="padding:5px;">
+
+    <label class="col-12" for="parent-contacts">Contacts</label>
+    <input class="col-12" type ="text" value="{{parent.parentID.contacts}}"
+    name="parent-contacts" id="parent-contacts">
+   
+    <div class="row">
+      <div class="col-12">
+        <button class="btn btn-primary btn-sm" type="Submit">Submit</button>
+     </div>
+    </div>
+
+    </div>
+    </div>
+   
+  </div><!-- Closes inner div -->
+
+  </form>
+
+  {% endfor %}
+
+    </div><!-- closes parents collapsible div -->
+  </div><!-- Closes parents div -->
+
+
+{% endblock %}

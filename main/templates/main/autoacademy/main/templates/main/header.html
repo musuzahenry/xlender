@@ -1,0 +1,165 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+
+<head lang="eng">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %} DTL UG. LTD | AutoAcademy |  {{title}} {% endblock %}</title>
+    
+    <!-- CSS only-->
+    <!-- ===================================================================== -->
+    <!-- Our custom css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'all/style.css'  %}">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'all/bootstrap.min.css'  %}">
+    <!-- fontawesome css -->
+   <link rel="stylesheet" type="text/css" href="{% static 'all/all.min.css'  %}"> 
+
+    <!-- 
+        We include JQuery and Jsdelir in the jead since they will be used in the body of the html page
+        ==================================================================================
+     -->
+    <script type="text/javascript" src="{% static 'all/jquery.min.js' %}" ></script>
+      <!--HTML table to Excel--->
+    <script src="
+      https://cdn.jsdelivr.net/npm/jquery-table2excel@1.1.1/dist/jquery.table2excel.min.js
+      "></script>
+
+
+      <style>
+
+        html, body{
+          height: 100%;
+        }
+        .container-fluid{
+          position: relative;
+          min-height: 100%;
+          padding-bottom: 100px;
+        }
+        
+        #add-student-btn{
+          margin-top: -140px;
+        }
+        table thead{ font-weight: bold; background: rgb(38, 203, 212);} 
+        table tfoot{background: rgb(24, 54, 94); color:white;}
+        .dtl-skyblue{background: rgb(38, 203, 212);} 
+        form input, form select{
+          border:0px transparent; border-bottom:1px solid black; border-radius: 5px; margin-bottom: 5px;
+        }
+        form label{
+          background: rgb(187, 237, 243);
+        }
+
+        .global-header{
+          background: rgb(24, 54, 94);
+          color:white;
+          padding-bottom: 5px !important;
+          height: 40px;
+          other: rgb(1, 2, 2);
+        }
+        .global-header p{
+          margin-top: 6px;
+          margin-bottom:0px;
+        }
+        .global-header .btn{
+          height: 30px;
+        }
+        .global-header a{
+          color:white;
+        }
+
+        .global-header i{
+          font-size:20px; margin:2px;
+        }
+
+        /* mobile menu css */
+          .mobile-menu-shower{
+            display: none;
+          }
+
+        .wide-menu{display: block;}
+
+        .mobile-menux{
+           background: rgb(24, 54, 94);
+          padding-bottom: 0px; margin: 0px !important; margin-bottom: 0px !important;
+          margin-bottom: -10px !important;
+        }
+
+        .mobile-menux li{
+          list-style-type:none; margin-top: 2px !important;
+        }
+
+        .mobile-menux li a{
+          text-decoration: none; color:white; margin-bottom: 3px;
+        }
+        .mobile-menux li a:hover{
+          text-decoration: underline; 
+        }
+
+        .mobile-menux li a i{
+            padding: 5px; padding-left: 10px; padding-right: 10px;
+        }
+        .mobile-menux i{
+          border-right:1px solid white; border-radius: 4px; width:35px; font-size: 16px !important;
+        }
+
+        /* student search form */
+        #std-search-form{
+          margin-top: 10px;
+        }
+
+
+     /*mobile device / small screeen css */
+     @media only screen and (max-width: 1000px) {
+        /* mobile menu css */
+
+        .wide-menu{display: none;}
+          .mobile-menu-shower{
+            display: block;
+            margin-bottom: 8px;
+          }
+
+          /* student search form */
+        #std-search-form{
+          margin-top: 0px;
+        }
+
+        #right-top-menu{display: none;}
+
+        .mobile-menux{
+          padding-top: 10px; padding-bottom: 10px;
+        }
+
+      }
+
+      </style>
+
+</head>
+<body>
+
+
+  
+<div class="container-fluid"><!-- Div closed in footer.html-->
+
+
+  <!-- Main menu present globally to all dashboard-->
+  <div class="row global-header">
+
+ 
+      <p class="col-md-6 col-12" style="text-align: left;">
+       <span><i class="fa fa-gear fa-spin"></i> DASHBOARD</span>
+      </p>
+
+      <p class="col-md-6 col-12" style="text-align: right;" id="right-top-menu">
+        <a class="btn btn-sm btn-primary" href="{% url 'index' %}" ><span><i class="fa fa-home "></i></span></a>
+        <a class="btn btn-sm btn-primary" href="" ><span><i class="fa fa-lock "></i></span></a>
+        <a id="logout" href="{% url 'user-logout' %}" class="btn btn-danger btn-sm"><span><i class="fa fa-power-off "></i></span> Logout</a>
+      </p>
+    
+    
+  </div>

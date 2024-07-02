@@ -1,0 +1,9 @@
+
+
+
+<form method="POST" action="{% url 'search-for-a-student' %}" id="std-search-form">
+    {% csrf_token %}
+    <input style="background: rgb(222, 246, 252); height: 35px;"
+    class="col-8" type="text" name="search-str" placeholder="Search by student name" required>
+    <button type="submit" class="btn btn-sm btn-primary">&nbsp;<i class="fa fa-angle-right"></i>&nbsp;</button>
+</form>

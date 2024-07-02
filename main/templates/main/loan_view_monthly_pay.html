@@ -1,0 +1,165 @@
+{% load humanize %}
+
+
+<div class="row" style="margin:0px; padding: 0px;">
+
+     <div class="col-md-2 col-12"></div>
+
+
+    <form  class="col-12 col-md-6" method="post" action="{% url 'main:monthly-loan-payment' %}">
+        {% csrf_token %}
+        <div class="row">
+         
+        <p class="col-12 text-info h2" style="margin:0px; padding: 0px;">
+            Loan Balance: {{request.session.current_balance | floatformat:1| intcomma }}</p>
+        <input type="hidden" name="current-balance" id="current-balance"
+         value="{{request.session.current_balance}}">
+        <input type="hidden" name="monthly-pay" value="monthly-pay">
+        <input type="hidden" value="{{loan.id}}" name="loanID">
+        
+        <label class="col-12"style="color:black; background:#5bc0de;
+        font-weight:bold; font-size:11px;height:30px; ">Pay Method</label>
+            <select class="col-12" style="border: 1px solid #5bc0de !important;"  
+             name="pay-method-id"  required>  
+        {% for pay_methodID in get_global_db_objects.pay_methods %}
+            <option value="{{pay_methodID.id}}">{{pay_methodID.pay_method_name}}</option>          
+        {% endfor %}
+        </select>
+        <input  class="col-12"type="text"  name="pay-medium" placeholder="Pay Medium"> 
+        <input class="col-12"type="text" name="pay-identification" placeholder="Pay indenfication">
+        
+        <input class="col-12" type="number" name="amount-paid" required placeholder="Amount Paid">
+
+        <input clas="col-md-1"style="margin-top:4px; padding: 5px;" type="submit" value="Pay Now">
+
+        </div>
+    </form>
+
+
+    <div class="col-md-2 col-12"></div>
+
+
+</div>
+
+
+
+<div class="row">
+   
+    {% if  interest_book %}
+ <!---- Only Daily loans in interest book here -->  
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Record Date</th>
+                <th>Interest</th>
+                <th>Loan Processing Fee</th>
+                <th>Record Book</th>
+                <th>Fines</th>
+                <th>Loan Recovered</th>
+                <th>Loan Disbursed</th>
+                <th>User</th>
+            </tr>
+        </thead>
+    <tbody>
+    {% for pay_back in interest_book %}
+    
+    <tr>
+        <td>{{ pay_back.record_date | date:'M d, Y' }}</td>
+        <td>{{ pay_back.interest_paid | floatformat:1| intcomma }}</td>
+        <td>{{ pay_back.processing_fee | floatformat:1| intcomma }}</td>       
+        <td>{{ pay_back.borrowers_book | floatformat:1| intcomma }}</td>
+        <td>{{ pay_back.fines | floatformat:1| intcomma }}</td>
+        <td>{{ pay_back.loan_recovered | floatformat:1| intcomma }}</td>
+        <td>{{ pay_back.loan_disbursed | floatformat:1| intcomma }}</td>   
+        <td>{{ pay_back.userID }}</td>
+    </tr>
+
+    {% endfor %}
+    </tbody>
+    </table>
+
+{% endif %}
+
+
+{% if cash_book %} 
+<!---Only Monthly loans here -->
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Record Date</th>
+            <th>Particulars</th>
+            <th>Debit</th>
+            <th>Credit</th>
+            <th>User</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for pay_back2 in cash_book %}
+        <tr>
+            <td>{{ pay_back2.record_date | date:'M d, Y' }}</td>
+            <td>{{ pay_back2.item_name }}</td>
+            <td>
+                {{ pay_back2.inc_amount | floatformat:1| intcomma }}
+            </td>       
+            <td>{{ pay_back2.exp_amount | floatformat:1| intcomma }}</td>
+            <td>{{ pay_back2.userID }}</td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+    </table>
+
+{% endif %}
+    </div>
+
+
+    <div class="row">
+       <h3>Added Fines</h3>
+        {% if added_fines %}
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Record Date</th>
+                        <th>Fines Added</th>
+                    </tr>
+                </thead>
+                <body>
+                    {% for fine in added_fines %}
+                    <tr>
+                        <td>
+                            <form method="POST" action="" 
+                            class="form form-inline" style="margin: 0px !important;">
+                            <!--The source cde here is executed in users_view.py -->
+                                {% csrf_token %}
+                                <input type="hidden" name="del-fineID" value="{{fine.id}}">
+                                <button type="submit" class='btn btn-sm btn-danger'>X</button>
+                            </form>
+                        </td>
+
+                        <td>{{fine.record_date}}</td>
+                        <td>
+                            
+                            <span data-target="#more-actions{{fine.id}}" data-toggle="collapse" style="cursor: pointer;"> 
+                                <i class="fa fa-pencil"></i>
+                            {{fine.amount | floatformat:1| intcomma }}
+                            </span>
+
+                            <form method="POST" action="" 
+                            class="form form-inline collapse" id="more-actions{{fine.id}}">
+                            <!--The source cde here is executed in users_view.py -->
+                                {% csrf_token %}
+                                <input type="hidden" name="interest-to-adjust" value="{{fine.id}}">
+                                <input type="number" name="amount">
+                                <input type="submit" value="Submit">
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </body>
+            </table>
+        {% endif %}
+        </div>
+
+

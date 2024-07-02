@@ -1,0 +1,205 @@
+
+{% extends 'main/bursar_dashboard.html' %}
+
+{% load static %}
+
+{% block content %}
+
+{% for message in messages %}   
+<p style="text-align: center; color:white;"   
+    {% if message.level_tag == 'info' %} 
+    class="col-12 bg-success"  
+    {% else %} 
+    class="col-12 bg-danger" 
+    {% endif %} >
+        {{message}}
+    </p>
+{% endfor %}
+
+<form method="POST" class="row" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="hidden" name="add-student" value="0">
+
+
+   <div class="col-12 col-md-6">
+
+    <div class="row">
+    <h3  style="cursor: pointer;" data-bs-target="#student-info" data-bs-toggle="collapse"
+    class="col-12">Student Info <i class="fa fa-angle-down btn btn-primary btn-sm"></i></h3>
+    </div>
+
+    <div class="row collapse show" id="student-info">
+      <div class="col-12 col-md-6">
+        <div class="row"  style="padding:5px;">
+    <label class="col-12" for ="student-image">Upload Student Image</label>
+    <input style="border-bottom: 0px;" class="col-12" type ="File" name="student-image" id="student-image">
+    <label class="col-12" for ="surname">Surname</label>
+    <input class="col-12" type ="text" name="surname" id="surname" required>
+    <label class="col-12" for="firstname">First Name</label>
+    <input class="col-12" type ="text" name="firstname" id="firstname" required>
+    <label class="col-12" for="othernames">Other Names</label>
+    <input class="col-12" type ="text" name="othernames" id="othernames"> 
+      </div>
+    </div>
+    
+    <div class="col-12 col-md-6">
+      <div class="row" style="padding:5px;">
+
+        <label class="col-12" for="gender">Gender</label>
+        <select class="col-12"  name="gender" id="dender">
+          <option value="NA">--</option>
+          <option value="M">Male</option>
+          <option value="F">Female</option>
+        </select>
+
+    <label class="col-12" for="status">Status</label>
+    <select class="col-12" name="status" id="status" required>
+        <option value="NA">--</option>
+        {% for status in STUDENT_TYPES %}
+          <option value="{{status.settings_name}}">{{status.student_type_name}}</option>       
+        {% endfor %}
+    </select> 
+              
+    <label class="col-12" for="dob">Date Of Birth</label>
+    <input class="col-12" type ="Date" name="dob" id="dob">
+    
+
+    <label class="col-12" for="student-no">Student No:</label>
+    <input class="col-12" type ="text" name="student-no" id="student-no">
+
+    <p class="col-12" style="margin-bottom: 4px;"><b>Class Details</b></i></p>
+
+    <label class="col-12" for="class">Choose Class</label>
+    <select class="col-12" name="class" id="class">
+      <option value="NA">--</option>
+      {% for class in ALL_CLASSES %}
+      <option value="{{class.settings_name}}">{{class.class_name}}</option>
+      {% endfor %}
+    </select>
+
+    <label class="col-12" for="termID">Choose Term</label>
+    <select class="col-12" name="termID" id="termID">
+      <option value="NA">--</option>
+      {% for term in ALL_TERMS %}
+      <option value="{{term.id}}">Term {{term.term_name}}</option>
+      {% endfor %}
+    </select>
+
+
+    <label class="col-12" for="strem-name">Choose Stream</label>
+    <select class="col-12" name="strem-name" id="strem-name">
+      {% for stream in ALL_STREAMS %}
+      <option value="{{stream.settings_name}}">{{stream.stream_name}}</option>
+      {% endfor %}
+    </select>
+
+    
+  </div>
+  </div>
+
+     </div><!-- closes inner wrapper -->
+     </div><!-- Closes student div wrapper -->
+
+
+    <div class="col-12 col-md-6">
+
+    <div class="row">
+    <h3 data-bs-target="#add-father-info" data-bs-toggle="collapse"
+        class="col-12">Father's Info <i class="fa fa-angle-down btn btn-primary btn-sm"></i></h3>
+    </div>
+
+
+    <div class="row collapse show" id="add-father-info">
+      <div class="col-12 col-md-6">
+        <div class="row" style="padding:5px;">
+    <label class="col-12" for ="father-surname">Father's Surname</label>
+    <input class="col-12" type ="text" name="father-surname" id="father-surname">
+
+    <label class="col-12" for="father-firstname">Father's  First Names</label>
+    <input class="col-12" type ="text" name="father-firstname" id="father-firstname">
+    </div>
+    </div>
+
+
+    <div class="col-12 col-md-6">
+      <div class="row" style="padding:5px;">
+
+    <label class="col-12" for="father-contacts">Father's Contacts</label>
+    <input class="col-12" type ="text" name="father-contacts" id="father-contacts">
+
+    </div>
+    </div>
+   
+  </div><!-- Closes inner div -->
+
+  <div class="row">
+    <h3 data-bs-target="#add-parent-info" data-bs-toggle="collapse"
+        class="col-12">Mother's Info <i class="fa fa-angle-down btn btn-primary btn-sm"></i></h3>
+    </div>
+
+
+    <div class="row collapse show" id="add-parent-info">
+      <div class="col-12 col-md-6">
+        <div class="row" style="padding:5px;">
+    <label class="col-12" for ="mother-surname">Mother's Surname</label>
+    <input class="col-12" type ="text" name="mother-surname" id="mother-surname">
+
+    <label class="col-12" for="mother-firstname">Mother's First Names</label>
+    <input class="col-12" type ="text" name="mother-firstname" id="mother-firstname">
+    </div>
+    </div>
+
+
+    <div class="col-12 col-md-6">
+      <div class="row" style="padding:5px;">
+    <label class="col-12" for="mother-contacts">Mother's  Contacts</label>
+    <input class="col-12" type ="text" name="mother-contacts" id="mother-contacts">
+
+    </div>
+    </div>
+   
+  </div><!-- Closes inner div -->
+
+
+  <div class="row">
+    <h3 data-bs-target="#add-guardian-info" data-bs-toggle="collapse"
+        class="col-12">Guardian Info <i class="fa fa-angle-down btn btn-primary btn-sm"></i></h3>
+    </div>
+
+
+    <div class="row collapse show" id="add-guardian-info">
+      <div class="col-12 col-md-6">
+        <div class="row" style="padding:5px;">
+    <label class="col-12" for ="guardian-surname">Guardian's Surname</label>
+    <input class="col-12" type ="text" name="guardian-surname" id="guardian-surname">
+
+    <label class="col-12" for="guardian-firstname">Guardian's First Names</label>
+    <input class="col-12" type ="text" name="guardian-firstname" id="guardian-firstname">
+    </div>
+    </div>
+
+
+    <div class="col-12 col-md-6">
+      <div class="row" style="padding:5px;">
+
+    <label class="col-12" for="guardian-contacts">Guardian's Contacts</label>
+    <input class="col-12" type ="text" name="guardian-contacts" id="guardian-contacts">
+
+    </div>
+    </div>
+   
+  </div><!-- Closes inner div -->
+
+   </div><!-- Closes parents div -->
+
+
+   <div class="row">
+    <p id="">
+    <button class="btn btn-primary btn-sm" type="Submit">Submit</button>
+    </p>
+    </div>
+
+</form>
+
+
+{% endblock %}

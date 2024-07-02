@@ -1,0 +1,102 @@
+
+
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="col-12">
+
+    {% for message in messages %}
+    <p class="bg-success text-white">{{message}}</p>
+    {% endfor %}
+
+<div class="row">
+
+    <h1>Reserved Spaces Invoices</h1>
+    <form method="POST" action="{% url 'list-reserved-spaces' %}">
+        {% csrf_token %}
+        <label for="date1">From</label>
+        <input type="date" name="date1">
+        <label for="date1">To</label>
+        <input type="date" name="date2">
+        <button style="padding-top: 2px !important; padding-bottom: 2px !important" type="submit" class="btn btn-sm btn-primary">Load</button>
+    </form>
+</div>
+
+
+<div class="row">
+    <p>
+        {% if orig_date1 %} 
+           From <b><i>{{orig_date1}}</i></b> 
+        {% endif %} 
+        {% if orig_date2 %} 
+           To <b><i>{{orig_date2}}</i></b> 
+        {% else %}
+        Today's Report
+        {% endif %}
+    </p>
+
+    <p>
+        <button class="export-to-excel btn btn-primary btn-sm">Export ToExcel</button>
+    </p>
+
+    <table class="table table-striped table-bordered" id="tab-export">
+
+        <thead class="bg-dark text-white"> 
+            <td>NO#</td>
+            <td>Record Date</td>
+            <td>Expiry Date</td>
+            <td>Reserved Space</td>
+            <td>Amount</td>
+            <td>User</td>
+        </thead>
+        <tbody>
+            {% for space_invoice in spaces_invoice_list %}
+            <tr {% if space_invoice.paid %}   {% else %} style="background:rgb(255, 159, 159);" {% endif %}>  
+                <td><a href="{% url 'set-reserved-space-by-click' space_invoice.reserved_spaceID.id %}">{{space_invoice.id}}</a></td>
+                <td><a href="{% url 'set-reserved-space-by-click' space_invoice.reserved_spaceID.id %}">{{space_invoice.reserved_spaceID.record_date}}</a></td>
+                <td><a href="{% url 'set-reserved-space-by-click' space_invoice.reserved_spaceID.id %}">{{space_invoice.reserved_spaceID.expiry_date  | date:"M d, Y"}}</a></td>
+                <td><a href="{% url 'set-reserved-space-by-click' space_invoice.reserved_spaceID.id %}">{{space_invoice.reserved_spaceID.description}}</a></td>
+                <td><a href="{% url 'set-reserved-space-by-click' space_invoice.reserved_spaceID.id %}">{{space_invoice.inc_amount | floatformat:0 | intcomma }}</a></td>
+                <td><a href="{% url 'set-reserved-space-by-click' space_invoice.reserved_spaceID.id %}">{{space_invoice.user_full_name}}</a></td>
+              </tr>
+            {% endfor %}
+        </tbody>
+
+        <tfoot class="bg-dark text-white">
+            <td>
+                Count: {{count}}
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Total: {{total | floatformat:0 |intcomma }}  </td>
+            <td></td>
+        </tfoot>
+    </table>
+</div>
+{% endif %}
+
+
+</div>
+
+
+<script>
+    $(".export-to-excel").click(function(){
+       $("td").find("input").remove("input")
+       $("td").find("label").remove("label")
+       $("td").find("i").remove("i")
+       $("#tab-export").table2excel({  
+    exclude: "",
+    name: "Worksheet Name",
+    filename: "ListReservedSpaces.xls", // do include extension
+    preserveColors: true // set to true if you want background colors and font colors preserved
+})
+
+});
+</script>
+
+{% endblock %}

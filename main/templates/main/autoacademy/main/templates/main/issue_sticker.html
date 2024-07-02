@@ -1,0 +1,306 @@
+
+
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+<div class="col-12">
+  {% include "main/search_form.html"  %}
+</div>
+
+<div class="row"> <!-- Spans Client and Loans--> 
+
+
+{% if user.is_authenticated %}
+  <div class="col-12 col-md-5">
+    
+  <h1>Issue Sticker</h1>
+  
+  {% for message in messages %}
+  <p style="text-align: center;" class="bg-success text-white">{{message}}</p>
+  {% endfor %}
+
+  <form  method="POST" action="{% url 'issue-sticker' %}" >
+    {% csrf_token %}
+    <label  class=" col-12 col-md-11" for="cars">Choose Sticker Type: </label><br/>
+    <select name="sticker-type" id="cars" class="col-12 col-md-11">
+      <option style="width:100%" value="NA">--</option>
+      {% for sticker in sticker_types %}
+      <option  class=" col-12 col-md-11" value="{{sticker.sticker_type_name}}">{{sticker.sticker_type_user_friendly_name}}</option>
+      {% endfor %}
+    </select><br/>
+
+    <label class=" col-12  col-md-11" for="client-name">Client Name</label><br/>
+    <input class=" col-12  col-md-11" type="text" id="client-name" name="client-name" required /><br/>
+
+
+    <label class=" col-12  col-md-11" for="plate-number">Plate Number</label><br/>
+    <input class=" col-12  col-md-11" type="text" id="plate-number" name="plate-number" required /><br/>
+
+    <label class=" col-12  col-md-11" for="plate-number">Number Of Months</label><br/>
+    <input class=" col-12  col-md-11" type="number" name="no-of-months" value="1" required /><br/>
+
+    <button style="margin-top: 5px;" type="submit" class="btn btn-info text-white"
+    onclick="this.disabled=true,this.form.submit();" >Submit</button>
+
+</form>
+   
+  
+</div><!--Div that contains submut form closes-->
+
+
+<div class="col-12 col-md-7">
+<div class="row">
+  
+ 
+  {% if sticker_receipt %}
+  <div  class="col-12 col-md-6" style="background:  rgb(234, 234, 248); margin-bottom: 20px;">
+     
+      <h2  style="font-weight: bold; text-align: center; line-height: 35px;" 
+                                   class="bg-dark text-white"><i>RECEIPT</i></h2>
+
+      <p style="text-align: left; margin: 0px; font-size:11px !important; text-transform: uppercase;">
+        <b>{{sticker_receipt.governing_bodyID}}</b><br/>
+                <i><b>{{sticker_receipt.RegionID}}</b></i>, <b>{{sticker_receipt.streetID}}</b></p>
+                ============================
+      <p style="font-size: 13px !important;">
+        {% if sticker_receipt.invoiceID.request_refund %} Refund Request: <span style="color:red;">
+          <b><i>Sent</i></b></span> <br/>{% endif %}
+        For: <b>PARKING STICKER</b><br/>
+        Client Name: <b>{{sticker_invoice.issued_stickerID.client_name}}</b><br/> Plate No: <b><i>{{sticker_receipt.particulars}}</i></b><br/> 
+        <span>Receipt No: <b>{{sticker_receipt.invoiceID.id}}</b>-<b>{{sticker_receipt.id}}</b></span><br/>
+        On: <b>{{sticker_receipt.record_date | date:"M d, Y"}}</b><br/>
+        Expires On: <b>{{sticker_receipt.issued_stickerID.expiry_date | date:"M d, Y"}}</b><br/>
+        Amount: <span class="text-danger"><i><b>{{sticker_receipt.amount | intcomma  }}</b></i></span><br/>
+        <span>-----------------</span><br/>
+        Printed By: <b>{{request.user}}</b><br/>
+        Printed: <b>{% now "jS F Y H:i" %}</b>
+        </p>
+        <p>
+          Copyright  © {% now 'Y' %}, <b>{{dtl_info.dtl_full_name}}</b>, 
+          <span style="font-size:13px;">{{dtl_info.phone_number}},
+          {{dtl_info.email}}, {{dtl_info.address}}, <i>{{dtl_info.other_details}}</i></span>
+          </p>
+        <table>
+          <tr>
+            <td>
+
+        <button class="btn btn-sm btn-success" style="margin-top:-17px;">Print</button>
+
+        </td>
+        <td>
+          {% if sticker_receipt.invoiceID.request_refund %} {% else %}
+          <!-- Hide refund request form from being seen when request has been sent -->
+          <form method="POST" action="{% url 'sticker-request-refund' %}" style="padding: 0px !important;">
+            {% csrf_token %}
+          <input type="hidden" name="sticker-request-refund-id" value="{{sticker_receipt.id}}">
+            <button class="btn btn-sm btn-danger">Request Refund</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      </table>
+
+  </table>
+    
+   </div>
+  {% endif %}<!-- Sticker invoices-->
+
+
+  {% if sticker_invoice %}
+  <div  class="col-12 col-md-6" style="background: rgb(234, 234, 248); margin-bottom: 20px;">
+
+    <h2  style="font-weight: bold; text-align: center; line-height: 35px;" 
+                                               class="bg-dark text-white"><i>INVOICE</i></h2>
+
+    <p style="text-align: left; margin: 0px; font-size:11px !important; text-transform: uppercase;">
+      <b>{{request.session.governing_body_name}}</b><br/>
+              <i><b>{{request.session.region_name}}</b></i>, <b>{{request.session.street_name}}</b></p>
+              ============================
+    <p style="font-size: 13px !important;">
+      For: <b>PARKING STICKER</b><br/>
+      Client Name: <b>{{sticker_invoice.issued_stickerID.client_name}}</b><br/>
+      Plate No: <i><b>{{sticker_invoice.particulars}}</b></i><br/>
+      {% if sticker_receipt.request_refund %}<span></span> Refund Request: <b>{{request_refund}}</b></span><br/>{% endif %}
+      {% if sticker_receipt.refunded %}<span></span> Refund Status: <b>{{refund_status}}</b></span><br/>{% endif %}
+      Invoice No: <b>{{sticker_invoice.issued_stickerID.id}}-{{sticker_invoice.id}}</b><br/>
+      On: <b>{{sticker_invoice.record_date | date:"M d, Y"}}</b><br/>
+      Expires On: <b>{{sticker_invoice.issued_stickerID.expiry_date | date:"M d, Y"}}</b><br/>
+      Amount: <span class="text-danger"><i><b>{{ sticker_invoice.inc_amount | intcomma }}</b></i></span><br/>
+      <span>-----------------</span><br/>
+      Printed By: <b>{{request.user}}</b><br/>
+      Printed: <b>{% now "jS F Y H:i" %}</b>
+      </p>
+      <p>
+        Copyright  © {% now 'Y' %}, <b>{{dtl_info.dtl_full_name}}</b>, 
+        <span style="font-size:13px;">{{dtl_info.phone_number}},
+        {{dtl_info.email}}, {{dtl_info.address}}, <i>{{dtl_info.other_details}}</i></span>
+        </p>
+          <table>
+        <tr>
+          <td>
+
+      <button class="btn btn-sm btn-success" style="margin-top:-17px;">Print</button>
+
+
+      </td>
+
+      <td>
+        {% if sticker_invoice.paid %}{% else %}
+        <form  style="margin-top: -20px;" method="POST" action = "{% url 'pay-sticker'%}" id="pay-this-invoice-{{sticker.id}}">
+          {% csrf_token %}
+          <input type="hidden" name="sticker-pay-id" value="{{sticker_invoice.issued_stickerID.id}}">
+          <input type="hidden" name="amountx" value="{{sticker_invoice.amount}}" disabled><br>
+          <button style="margin-top:0px;;" class="btn btn-sm btn-primary text-white">Pay Now</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    </table>
+
+</div>
+
+  {% endif %}<!-- Sticker Receipts-->
+
+
+</div>  
+</div>
+
+
+<div class="col-12 col-md-12">
+
+  <h1>Unpaid Stickers Invoices</h1>
+  <table class="table table-striped table-bordered">
+    <thead class="bg-dark text-white">
+      <tr>
+        <td>Sticker No</td>
+        <td>Record Date</td>
+        <td>Edpiery Date</td>
+        <td>Particulars</td>
+        <td>Amount</td>
+        <td>Recording User</td>
+      </tr>
+    </thead>   
+     
+    <tbody>
+      {%for sticker in unpaid_stickers %}
+      <tr style="background: rgb(250,200,200);">
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.id}}</a></td>
+        <td>
+          <button class="btn btn-primary text-white"
+          data-bs-target="#pay-this-invoice-{{sticker.id}}" data-bs-toggle="collapse">
+          <i class="fa fa-arrow-down"></i>
+          </button>
+
+          <div class="collapse" id="pay-this-invoice-{{sticker.id}}">
+
+          <form method="POST" action = "{% url 'pay-sticker'%}" >
+            {% csrf_token %}
+            <input type="hidden" name="sticker-pay-id" value="{{sticker.id}}">
+            <input type="number" name="amountx" value="{{sticker.amount}}" disabled><br>
+            <button style="margin-top: 4px;;" class="btn btn-sm btn-primary text-white">Pay Now</button>
+          </form>
+
+          <form method="POST" action ="">
+            {% csrf_token %}
+            <input type="hidden" name="del-stickerID" value="{{sticker.id}}" />
+            <button  class="btn btn-sm btn-danger"
+            type="submit" onclick="this.disabled=true,this.form.submit();" />
+              x | Delete</button>
+          </form>
+
+          </div>
+
+          {{sticker.record_date}}
+        </td>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.expiry_date}}</a></td>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.particulars}}</a></td>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.amount |intcomma }}</a></td>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.user_full_name}}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+
+    <tfoot class="bg-dark text-white"></tfoot>
+  </table>
+
+
+  <h1>Paid and valid stickers</h1>
+  <table class="table table-striped table-bordered">
+    <thead class="bg-dark text-white">
+      <tr>
+        <td>StickerID</td>
+        <td>Record Date</td>
+        <td>Edpiery Date</td>
+        <td>Particulars</td>
+        <td>Amount</td>
+        <td>Recording User</td>
+      </tr>
+    </thead>   
+     
+    <tbody>
+      {%for sticker in paid_valid_stickers %}
+      <tr>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.id}}</a></td>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.record_date}}</a></td>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.expiry_date}}</a></td>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.particulars}}</a></td>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.amount}}</a></td>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.user_full_name}}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+
+    <tfoot class="bg-dark text-white"></tfoot>
+  </table>
+
+</div>
+
+
+
+<div class="col-12 col-md-12">
+  <h1>Expired Stickers</h1>
+  <table class="table table-striped table-bordered">
+    <thead class="bg-dark text-white">
+      <tr>
+        <td>StickerID</td>
+        <td>Record Date</td>
+        <td>Edpiery Date</td>
+        <td>Particulars</td>
+        <td>Amount</td>
+        <td>Recording User</td>
+      </tr>
+    </thead>   
+     
+    <tbody>
+      {%for sticker in expired_stickers %}
+      <tr  {% if sticker.paid %} style="background: rgb(250,200,200);" {% endif %} >
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.id}}</a>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.record_date}}</a></td>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.expiry_date}}</a></td>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.particulars}}</a></td>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.amount}}</a></td>
+        <td><a href="{% url 'set-current-sticker-by-click' sticker.id %}">{{sticker.user_full_name}}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+
+    <tfoot class="bg-dark text-white"></tfoot>
+  </table>
+
+</div>
+
+{% endif %}
+
+
+
+<script>
+  document.getElementById("id_password").removeAttribute("required")
+</script>
+
+</div>
+
+{% endblock %}

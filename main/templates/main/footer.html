@@ -1,0 +1,45 @@
+         
+        </div><!-- Main closing container closes here-->  
+        
+        <div class="row bg-dark text-white" style="padding-top: 2px !important; padding-bottom: 2px !important;">
+            &nbsp;
+            
+         <!-- General Footer content starts here -->
+         
+         <div class="col-sm-12 col-xs-12">
+        <div class="row">
+            
+         <!---- Authentiated users work below here--> 
+         
+         <div class="col-12">
+        <div class="row">
+            <div class="col-12 col-md-6">
+             <p class="current-user">
+              {% if user.is_authenticated %}    
+             &nbsp; StationID: {{request.session.current_stationID}} || Station Name: {{request.session.current_station}} 
+             ||&nbsp; Current UserID: {{user.id}} || Current User: {{user.get_username}}  
+             </p>  
+         </div>  
+        {% endif %}
+            <div class="col-12 {% if user.is_authenticated %} col-md-6 {% endif %} ">
+             <p class="copyright">
+              Copyright &copy; {% now "Y" %} EasyApps, EasyApps is Supervised by Easy Solutions Co. LTD
+             </p>
+            </div>
+
+          </div>
+        </div>
+        
+        </div>
+         
+         <!-- General Footer content ends here -->
+        </div>
+ 
+         
+        
+
+     
+        
+        
+    </body>
+</html>

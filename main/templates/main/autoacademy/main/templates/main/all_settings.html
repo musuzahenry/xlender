@@ -1,0 +1,71 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+
+<div class="row"> <!-- Spans Client and Loans--> 
+
+{% if user.is_authenticated %}
+
+
+<div class="col-12" >
+
+
+    {% for message in messages %}
+    <p class="bg-success text-white" style="text-align: center;">{{message}}</p>
+    {% endfor %}
+    <h1>All Streets</h1>
+
+
+    <table class="table table-striped table-striped table-bordered">
+        <thead class="bg-dark text-white">
+            <tr>   
+                <td>No#</td>
+                <td>Settings Name</td>
+                <td>Value</td>
+ 
+            </tr>
+        </thead>
+        <tbody>
+       {% for settings in all_settings %}
+            <tr>   
+                <td>{{settings.id}}</td>
+                <td>{{settings.user_frienddly_name}}</td>
+                <td>
+                    
+                    <span class="btn btn-sm btn-primary"
+                    data-bs-target="#settings-form{{settings.id}}" data-bs-toggle="collapse">
+                    Adjust <i class="fa fa-bars"></i> &nbsp; 
+                    </span>
+                    <form style="margin-bottom: 5px !important;" 
+                    action="" id="settings-form{{settings.id}}" method="POST" class="collapse">
+                        {% csrf_token %}
+                       <input type="hidden" name="settings-name" value="{{settings.settings_name}}">
+                       <input name="settings-value"
+                        type="number" value="{{settings.settings_value | floatformat:0 | intcomma }}" required />
+                    <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                    </form>
+                    &nbsp; {{settings.settings_value | floatformat:0 | intcomma }}
+                </td>                
+            </tr>
+        {% endfor %}
+
+        </tbody>
+        <tfoot class="bg-dark text-white">
+            <tr>   
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+
+    </table>
+</div>
+
+
+{% endif %}
+</div><!--closes this page top row div-->
+{% endblock %}

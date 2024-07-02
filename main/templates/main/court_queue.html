@@ -1,0 +1,151 @@
+
+
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+<!--Anything under block content will be displayed  -->
+{% block content %}
+{% if user.is_authenticated %}
+<div class="row">
+
+<br>
+<div class="col-12" style="margin-top: 10px;">
+<form class="form-inline" method="POST" action="{% url 'main:view-court-queue' %}">
+    {% csrf_token %}
+    <select  name="station-id" id="station">
+        <option  value="0">Choose Station</option>
+        {% for station in get_global_db_objects.stations %}
+            <option value="{{station.id}}">{{station.station_name}}</option>          
+        {% endfor %}
+    </select>&nbsp;
+    <input type="date" name="date1" placeholder="yyyy-mm-dd" required>&nbsp;
+    <input type="date" name="date2" placeholder="yyyy-mm-dd" required>
+    <input  class="btn btn-sm btn-info text-white" type="submit" value="Submit"> 
+</form>
+</div>
+
+<div class="col-12">
+    
+    <form class="row" method="POST" action="{% url 'main:view-court-queue' %}">
+        {% csrf_token %}
+        <div class="col-12">
+        <p  style="margin-top: 0px; margin-bottom: 0px;">Search By Names</p>
+        </div>
+        <div class="col-12">
+        <input type="text" name="name-seach" placeholder="User surname / other names" required>
+        <input  class="btn btn-sm btn-info text-white" type="submit" value="Submit">    
+        </div>
+    </form>
+
+</div>
+
+
+<div class="col-12">
+    <div class="row">
+    {% for message in messages %}
+    <p class="bg-danger text-white col-12" style="width:100% !important; text-align: center;">
+    {{message}}
+    </p>
+    {% endfor %}
+    </div>
+
+    <div class="row">
+    <h1>{{title}}</h1>
+    {% if request.POST.date1 %}
+    <p class="col-12"><b>From:</b> {{request.POST.date1}} <b>To:</b> {{request.POST.date2}} </p>
+    {% else %}
+    <p class="col-12">Today's Report</p>
+    {% endif %}
+    <table class="table table-striped table-bordered">
+        <thead class="bg-info text-white">
+            <tr>
+                <td>Loan Record Date</td>  <td>Station</td>          
+                <td>Full Name</td> <td>Demand Notice</td> <td>Current Balance </td> <td>Original Principle</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for court in court_set %}
+            <tr>
+                <td>
+                    <i style="text-align: center; border:1px solid transparent;cursor: pointer;"
+                   class="fa fa-angle-down btn btn-info" data-target="#courtqueue{{court.id}}" data-toggle="collapse"></i>&nbsp;
+                    
+                   <form method="POST" action=""class="collapse" id="courtqueue{{court.id}}">
+                    <table style="margin: 0px;">
+                        <tr style="margin: 0px;"><td>
+                        {% csrf_token %}
+                        <input type="hidden" name="del-court-id" value="{{court.id}}">
+                         <textarea name="details" placeholder="Give details"></textarea>
+                        </td></tr>
+                        <tr style="margin: 0px;"><td>
+                        <button type="submit" class="btn btn-sm btn-danger">Remove From List</button>
+                        </td></tr>
+                        </table>
+                    </form>
+                    &nbsp;
+    
+                    <a href="{% url 'main:court-details' court.id%}">
+                      {{court.loan_record_date | date:'M d, Y'}}</button>
+                    </a>
+                </td> 
+
+                <td>
+                    <a href="{% url 'main:court-details' court.id%}">
+                        {{court.stationID }}
+                    </a>
+                </td> 
+                <td>
+                    <a href="{% url 'main:court-details' court.id%}">
+                  {{court.full_name}}
+                </a>
+                </td> 
+
+                <td>
+                    <a href="{% url 'main:court-details' court.id%}">
+                  {{court.demand_notice}}
+                </a>
+                </td>
+
+
+                <td>
+                    <a href="{% url 'main:court-details' court.id%}">
+                        {{court.loan_debt | intcomma }}
+                       </a> 
+                    </td> 
+
+                <td>
+                    <a href="{% url 'main:court-details' court.id%}">
+                        
+                        {{court.loan_principle | intcomma }}
+                       </a> 
+                    </td> 
+    
+
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        <tfoot  class="bg-dark text-white">
+            <tr>
+                <td></td>
+                <td></td> 
+                <td></td>  
+                <td></td>    
+                <td>{{ total_principle | intcomma }}</td> 
+                <td>{{ total_balance | intcomma }}</td>  
+            </tr>
+        </tfoot>
+
+    </table>
+
+    </div>
+</div>
+
+</div>
+
+
+
+{% endif %}
+{% endblock %}

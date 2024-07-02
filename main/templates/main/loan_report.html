@@ -1,0 +1,111 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+
+{% if user.is_authenticated %}
+
+<div class="row">
+
+
+<p class="col-12" >
+    <a  href="{% url 'main:approve-loans' %}">Approve Loans</a> | 
+    <a href="{% url 'main:approved-loans' %}">Approved Loans</a>
+</p>
+
+    <h1 class="col-sm-12">{{title}}</h1>
+
+    <table class="col-sm-12 table table-striped table-bordered">
+        <thead class="bg-info text-white">
+            <tr>
+                <td>Record Date</td> <td>Station</td> <td>Full Name</td>          
+                <td>Principle </td> <td>User</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for loan in approve_loans_set %}
+            <tr>
+                <td>
+                    <form method="POST" class="form-inline loan-list-button" 
+                    action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="set-loan-id" value="{{loan.id}}">
+                    <button style="background: transparent; border:0px; cursor: pointer;
+                    text-decoration: underline;"type="submit"class="text-info"
+                    style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                     border: 0px transparent; cursor: pointer;">{{loan.record_date }}</button>
+                     </form>
+                </td> 
+                <td>
+                    <form method="POST" class="form-inline loan-list-button" 
+                    action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="set-loan-id" value="{{loan.id}}">
+                    <button style="background: transparent; border:0px; cursor: pointer;
+                    text-decoration: underline;"type="submit"class="text-info"
+                    style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                     border: 0px transparent; cursor: pointer;">{{loan.stationID }}
+                     </button>
+                    </form>
+                </td> 
+                <td>
+                    <form method="POST" class="form-inline loan-list-button" 
+                    action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="set-loan-id" value="{{loan.id}}">
+                    <button style="background: transparent; border:0px; cursor: pointer;
+                    text-decoration: underline;"type="submit"class="text-info"
+                    style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                     border: 0px transparent; cursor: pointer;">{{loan.full_name }}
+                     </button>
+                    </form>
+                </td> 
+                <td>
+                    <form method="POST" class="form-inline loan-list-button" 
+                    action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="set-loan-id" value="{{loan.id}}">
+                    <button style="background: transparent; border:0px; cursor: pointer;
+                    text-decoration: underline;"type="submit"class="text-info"
+                    style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                     border: 0px transparent; cursor: pointer;">{{loan.principle | intcomma  }}
+                       </button>
+                    </form> 
+                    </td> 
+                <td>
+                    <form method="POST" class="form-inline loan-list-button" 
+                    action="{% url 'main:index' %}" style="display: inline-block; padding: 0px; margin: 0px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="set-loan-id" value="{{loan.id}}">
+                    <button style="background: transparent; border:0px; cursor: pointer;
+                    text-decoration: underline;"type="submit"class="text-info"
+                    style="margin:0px; margin-left: 3px; padding-left:4px; padding-right:4px;
+                     border: 0px transparent; cursor: pointer;">
+                    {{loan.userID}}
+                </button>
+                </form> 
+                </td> 
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        <tfoot  class="bg-dark text-white">
+            <tr>
+                <td></td> 
+                <td></td> 
+                <td></td> 
+                <td>Total Principle</td> 
+                <td>{{total_principle | intcomma }}</td> 
+            </tr>
+        </tfoot>
+
+    </table>
+    
+</div>
+
+{% endif %}
+
+{% endblock %}

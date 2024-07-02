@@ -1,0 +1,214 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+
+
+{% block content %}
+<!-- Open block content-->
+
+<div class="row" style="margin-top: 10px;">
+    <div class="col-12">
+        <h3 class="col-12"><a href="{% url 'main:index' %}" class="btn btn-sm btn-success">
+            <i class="fa fa-arrow-left"></i> Back</a> {{request.session.current_client_fullname}}</h3>
+    </div>
+
+
+    <div class="col-12 col-md-4" style="text-align: left;">
+    
+    <div class="row">
+
+        <div class="col-12">
+        <table class="table">
+            <tr>
+                <td>  
+            <a href="{% url 'main:client-image' %}">
+                <button class="btn-danger text-white">Set Client Image</button>
+            </a>
+            <img src="{% get_media_prefix %}{{client_img}}" style="width:100%; min-height: 10px;"
+            alt="{{surname}} {{first_name}} {{other_names}}">
+        </td>
+       </tr>
+        <tr>
+            <td>
+                <a href="{% url 'main:national-id' %}">
+                        <button class="btn-danger text-white">Set NationalID Image</button>
+                    </a><br>
+                <a style="font-size: 10px; text-decoration: underline;"
+                target="_blank" href="{% get_media_prefix %}{{national_id}}">{{national_id}}</a>
+            </td>
+        </tr>
+    </table>
+
+    </div>
+    <div class="col-12">
+        
+    </div>
+</div>
+
+</div>
+
+
+<form action="{% url 'main:edit-client' %}" name="form-edit-client"
+class="col-md-8" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <!--Hidden attributes-->
+    <input type="hidden" value="actual-edit" name="actual-edit">
+    <input type="hidden"  value="edit-client" name="edit-client">
+    <input type="hidden" name="clientID" value="{{clientID}}">
+
+       
+        <div class="row">
+            
+            <div class="col-12 col-md-12">
+                <h4 class="col-12" data-target="#bio-data" data-toggle="collapse">Client BioData<i class="fa fa-angle-down"></i></h4>
+                <div id="bio-data" class="collapse show">
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                 <label class="col-12" for="surname">Surname</label>
+                 <input class="col-12" type="text" value="{{surname}}" name="surname" required>
+                <label class="col-12" for="first-name">First Name</label>
+                <input class="col-12" type="text" value="{{first_name}}" name="first-name" required>
+                <label class="col-12" for="other-names">Other Names</label>
+                <input class="col-12" type="text" value="{{other_names}}" name="other-names">
+                <label class="col-12" for="national-identification-number">NIN</label>
+                <input class="col-12" type="text" value="{{national_identification_number}}" 
+                name="national-identification-number">
+                <label class="col-12" for="gender">Gender {{gender}} || {{gender_string}}</label>
+                <select class="col-12"  name="gender">
+                    <option value="X">NA</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                    <option value="{{gender}}">{{gender_string}}</option>
+                </select>
+                <label class="col-12" for="date-of-birth">Date of Birth</label>
+
+                <input class="col-12"type="text" value="{{date_of_birth}}" name="date-of-birth"
+                placeholder="YYYY-MM-DD" required>
+                </div>
+
+                <div class="col-12 col-md-6">
+                <label class="col-12" for="physical-address">Physical Address</label>
+                <input class="col-12" type="text" value="{{physical_address}}" name="physical-address">
+                <label class="col-12" for="contact-numbers">Phone Contacts <i>(Coma seperated)</i></label>
+                <input class="col-12" type="text" value="{{contact_numbers}}" name="contact-numbers">
+                <label class="col-12" for="email-address">Email Address</label>
+                <input class="col-12" type="text" value="{{email_address}}" name="email-address">
+
+                <label class="col-12" for="district">District</label>
+                <input class="col-12" type="text" value="{{district}}" name="district">
+                <label class="col-12" for="sub-county">Sub County</label>
+                <input class="col-12" type="text" value="{{sub_county}}" name="sub-county">
+                <label class="col-12" for="lc1-village">LC1 Village</label>
+                <input class="col-12" type="text" value="{{lc1_village}}" name="lc1-village">
+                </div>   
+            </div>
+            </div>
+
+
+
+            <h4 class="col-12" data-target="#next-of-kin" data-toggle="collapse">Next of Kin<i class="fa fa-angle-down"></i></h4>
+            <div class="col-12 col-md-12">
+                <div id="next-of-kin" class="collapse">
+                    <div class="row">
+
+                <div class="col-12 col-md-6">
+                    <label class="col-12" for="next-of-kin1">Next of Kin1 Names</label>
+                    <input class="col-12" type="text" value="{{next_of_kin1}}" name="next-of-kin1">
+                    <label class="col-12" for="next-of-kin1-contacts">Next of Kin1 Contacts</label>
+                    <input class="col-12" type="text" value="{{next_of_kin1_contacts}}" name="next-of-kin1-contacts">
+                    <label class="col-12" for="next-of-kin1-address">Next of Kin1 Address</label>
+                    <input class="col-12" type="text" value="{{next_of_kin1_address}}" name="next-of-kin1-address">
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label class="col-12" for="next-of-kin2">Next of Kin2 Names</label>
+                    <input class="col-12" type="text" value="{{next_of_kin2}}" name="next-of-kin2">
+                    <label class="col-12" for="next-of-kin2-contacts">Next of Kin2 Contacts</label>
+                    <input class="col-12" type="text" value="{{next_of_kin2_contacts}}" name="next-of-kin2-contacts">
+                    <label class="col-12" for="next-of-kin2-address">Next of Kin2 Address</label>
+                    <input class="col-12" type="text" value="{{next_of_kin2_address}}" name="next-of-kin2-address">
+
+                </div>
+
+                </div>
+                </div>
+            </div>
+            
+            <h4 class="col-12" data-target="#financial-details" data-toggle="collapse">Financial Details<i class="fa fa-angle-down"></i></h4>
+            <div class="col-12 col-md-12">
+                
+                <div id="financial-details" class="collapse">  
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                    <label class="col-12" for="occupation">Occupation</label>
+                    <input class="col-12" type="text" value="{{occupation}}" name="occupation">
+                    <label class="col-12" for="bank-name">Bank Name</label>
+                    <input class="col-12" type="text" value="{{bank_name}}" name="bank-name">
+                    <label class="col-12" for="accountNo">Account No:</label>
+                    <input class="col-12" type="text" value="{{accountNo}}" name="accountNo">
+                    </div>
+
+                    <div class="col-md-6 col-12">
+                        <label class="col-12" for="ATM-NO">ATM_NO</label>
+                        <input class="col-12" type="text" value="{{ATM_NO}}" name="ATM-NO">
+                        <label class="col-12" for="ATM-PIN">ATM_PIN</label>
+                        <input class="col-12" type="text" value="{{ATM_PIN}}" name="ATM-PIN">
+                        <label class="col-12" for="employer">Employer</label>
+                        <input class="col-12" type="text" value="{{employer}}" name="employer">
+                        <label class="col-12" for="employer-address">Employer Adress</label>
+                        <input class="col-12" type="text" value="{{employer_address}}" name="employer-address">
+
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+
+
+
+
+        <h4 class="col-12" data-target="#others" data-toggle="collapse">Others<i class="fa fa-angle-down"></i></h4>
+        <div class="col-12 col-md-12">
+            <div id="others" class="collapse">
+            <div class="row">
+                <div class="col-md-6 col-12">
+                        <label class="col-12" >Station</label>
+                        <select class="col-12"  name="stationID" id="station">
+                            <option value="{{stationID_id}}">{{stationID_name}}</option> 
+                            {% for station in get_global_db_objects.stations %}
+                                <option value="{{station.id}}">{{station.station_name}}</option>          
+                            {% endfor %}
+                        </select>
+                </div>
+                <div class="col-md-6 col-12">
+                        <label class="col-12">Client Type</label>
+                        <select   class="col-12" name="client-typeID" id="client-typeID">
+                            <option value="{{client_typeID_id}}">{{client_typeID_name}}</option> 
+                            {% for client_type in get_global_db_objects.client_types %}
+                                <option value="{{client_type.id}}">{{client_type.client_type_name}}</option>          
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    
+                <div class="col-12 col-md-12">
+                    <input id="submit-btn"
+                     style="padding:7px; width:80px; margin-top:20px;" type="Submit" value="Submit">   
+                </div>
+            
+        </div>
+
+
+    </div>
+  
+</form>
+
+</div>
+
+
+<!--Close block content-->
+{% endblock %}

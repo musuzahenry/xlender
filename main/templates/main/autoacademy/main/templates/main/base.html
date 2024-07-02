@@ -1,0 +1,23 @@
+{% load static %}
+{% load humanize %}
+
+
+{% include "main/header.html" %}
+
+<div class="col-12" >
+<div class="row" style="min-height: 80%;">
+
+    <div class="row">
+
+            {% block content %}
+            
+
+
+            {% endblock %}
+        
+    </div> 
+
+</div>        
+</div>
+<!-- Footer -->
+{% include "main/footer.html" %}

@@ -1,0 +1,96 @@
+
+
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="col-12">
+
+        <form class="row"  method="POST" action="{% url 'search-reserved-spaces' %}">
+            {% csrf_token %}
+            <p style="margin-bottom:2px;"><b>Search For A Space</b></p>
+            <input class="col-9 col-md-8" 
+            type="text" name="search-space-name" placeholder="*Enter space name*" 
+            value="All" />
+            <button style="width:50px;"type="submit" class="btn btn-sm btn-primary text-white">Load</button>
+
+        </form>
+
+
+            
+        <p  data-bs-target="#add-space-form" data-bs-toggle="collapse">&nbsp;Add New Client <button class="btn btn-danger text-white">
+            <i class="fa fa-plus"></i></button></p>
+
+
+
+        <div id="add-space-form" class="collapse">
+            <p style="font-size:17px !important;"><b>Add Space Cleint</b></p>
+            <form method="POST" action="">
+                <table class="col-12 col-md-4">
+                 <tr>
+                {% csrf_token %}
+                <td>
+                    <label for="add-space-client-name" style="width:100%;">Client Name</label>
+                    <textarea style="width:100%;" 
+                    name="add-space-client-name" required></textarea>
+                </td></tr>
+                <tr>
+                <td>
+                    <label style="width:100%;" for="contacts">Contacts</label>
+                    <input style="width:100%;" type="text" name="contacts" placeholder="Contacts">
+                </td>
+                </tr>
+                <tr>
+                <td>
+                    <label style="width:100%;" for="address">Address</label>
+                    <input style="width:100%;" type="text" name="address" placeholder="Address">
+                </td></tr>
+                <tr>
+                <td><button type="submit" class="btn btn-sm btn-primary text-white">Submit</button></td>
+                </tr>
+                </table>
+            </form>
+       </div>
+
+        {% for message in messages %}
+        <p class="bg-success text-white" style="text-align: center;">{{message}}</p>
+        {% endfor %}
+
+
+<div class="row">
+    <table class="table table-striped table-bordered">
+
+        <thead class="bg-dark text-white"> 
+            <td>NO#</td>
+            <td>Client Name</td>
+            <td>Contacts</td>
+            <td>Address</td>
+        </thead>
+        <tbody>
+            {% for space in spaces_list %}
+            <tr>  
+              <td style="width:70px;"><a href="{% url 'set-reserved-space-client-by-click' space.id %}">{{space.id}}</a></td>
+              <td><a href="{% url 'set-reserved-space-client-by-click' space.id %}">{{space.client_name}}</a></td>
+              <td><a href="{% url 'set-reserved-space-client-by-click' space.id %}">{{space.contacts}}</a></td>
+              <td><a href="{% url 'set-reserved-space-client-by-click' space.id %}">{{space.address}}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        <tfoot class="bg-dark text-white">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tfoot>
+    </table>
+</div>
+
+</div>
+{% endif %}
+
+
+{% endblock %}

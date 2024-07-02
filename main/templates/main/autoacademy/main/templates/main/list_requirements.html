@@ -1,0 +1,254 @@
+
+{% extends "main/bursar_dashboard.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="row"> 
+    <h4>Current Class: {{current_class}} | {{current_student_type}} </h4>
+
+
+<div class="col-12">
+
+
+     <p >
+        <button style="margin-top: 4px; font-size: 12px;"
+        class="btn btn-sm btn-danger" data-bs-target="#add-fees" data-bs-toggle="collapse">
+            <i class="fa fa-plus"></i>School Fees
+        </button> 
+
+    <button style="margin-top: 4px; font-size: 12px;"
+    class="btn btn-sm btn-danger" data-bs-target="#add-monetary" data-bs-toggle="collapse">
+        <i class="fa fa-plus"></i> Monetary 
+    </button> 
+    <button style="margin-top: 4px; font-size: 12px;"
+    class="btn btn-sm btn-danger" data-bs-target="#add-material" data-bs-toggle="collapse">
+        <i class="fa fa-plus"></i> Material
+    </button> 
+    </p>
+
+
+
+
+
+    <div class="row collapse" id="add-fees">
+
+        <form method="POST" action="" class="col-md-6 col-12" style="padding:5px; margin-left:20px;">
+            {% csrf_token %}
+            <div class="row">
+                <h5 class="">Add School Fees</h5>
+                <div class="col-md-6 col-12" style="padding-left: 20px;">
+                <div class="row">
+                    <input type="hidden" name="add-requirements" value="0">
+                    <input type="hidden" name="add-monetary" value="0">
+                    <input type="hidden" name="add-fees" value="0">
+                    <input type="hidden" name="gender" value="Both">
+                
+                <label class="col-12" for="amount-requiredx">Add School Fees</label>
+                <input class="col-12" type="number" id="amount-requiredx" 
+                name="amount-requiredx" placeholder="Amount Required" required value="0" required step="any">
+
+                   
+                <p class="col-12">
+                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                </p>
+                
+                </div>
+                </div>
+                </div>
+        </form>
+    </div>
+
+
+
+
+    <div class="row collapse" id="add-monetary">
+
+        <form method="POST" action="" class="col-md-6 col-12" style="padding:5px; margin-left:20px;">
+            <div class="row">
+                <h5 class="col-12">Monetary</h5>
+                <div class="col-md-6">
+                    
+                    <div class="row">
+            {% csrf_token %}
+
+            <input type="hidden" name="add-requirements" value="0">
+            <input type="hidden" name="add-monetary" value="0">
+
+
+                <label class="col-12" for="itemID">Item</label>
+                <select class="col-12" name="itemID" id="itemID">
+                    <option value="NA">--</option>
+                    {% for item in monetary_items %}
+                    <option value="{{item.id}}">{{ item.item_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label class="col-12" for="gender">Gender</label>
+                <select name="gender">
+                    <option value="Both">Required For Both Boys & Girls</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </select>
+
+                  </div>
+                </div>
+
+
+                <div class="col-md-6 col-12" style="padding-left: 20px;">
+                    <div class="row">
+
+                <label class="col-12" for="amount-requiredx">Amount</label>
+                <input class="col-12" type="number" id="amount-requiredx" 
+                name="amount-requiredx" placeholder="Amount Required" required value="0" required step="any">
+
+
+                   
+                <p class="col-12">
+                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                </p>
+                
+                </div>
+                </div>
+                </div>
+        </form>
+    </div>
+
+
+    <div class="row collapse" id="add-material">
+
+        <form method="POST" action="" class="col-md-6 col-12" style="padding:5px; margin-left:20px;">
+            <div class="row">
+                <h5 class="col-12">Material</h5>
+                <div class="col-md-6">
+                    
+                    <div class="row">
+            {% csrf_token %}
+
+            <input type="hidden" name="add-requirements" value="0">
+            <input type="hidden" name="add-material" value="0">
+
+
+                <label class="col-12" for="itemID">Item</label>
+                <select class="col-12" name="itemID" id="itemID">
+                    <option value="NA">--</option>
+                    {% for item in material_items %}
+                    <option value="{{item.id}}">{{ item.item_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label class="col-12" for="gender">Gender</label>
+                <select name="gender">
+                    <option value="Both">Required For Both Boys & Girls</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </select>
+
+                  </div>
+                </div>
+
+ 
+
+                <div class="col-md-6 col-12" style="padding-left: 20px;">
+                    <div class="row">
+                 
+                <label class="col-12" for="qty">Quantity Required</label>
+                <input class="col-12" type="number" name="qty-required" 
+                id="qty-required" placeholder="Qunatity Required" required value="0" step="any">
+                   
+                <p class="col-12">
+                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                </p>
+                
+                </div>
+                </div>
+                </div>
+        </form>
+    </div>
+
+</div>
+
+
+
+
+{% for message in messages %}   
+<p style="text-align: center; color:white;"   
+    {% if message.level_tag == 'info' %} 
+    class="col-12 bg-success"  
+    {% else %} 
+    class="col-12 bg-danger" 
+    {% endif %} >
+        {{message}}
+    </p>
+{% endfor %}
+
+<div class="col-12">
+<table class="table table-striped table-bordered" style="margin-top:5px;">
+
+    <thead class="dtl-skyblue">
+
+        <tr>
+            <td></td>
+            <td>Status</td>
+            <td>Class</td>
+            <td>Required For</td>
+            <td>Name</td>
+            <td>Quantity Required</td>
+            <td>Amount Required</td>
+        </tr>
+    </thead>
+   <tbody>
+    {% for requirement in all_requirements %}
+    <tr>
+        <td>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" name="del-requirementID" value="{{requirement.id}}">
+                <button style="border:0px; font-size: 14px; "> 
+                    <span style="color:red !important;"> &#128465;</span> Delete</button>
+            </form>
+        </td>
+
+        <form method="POST" action="">
+            {% csrf_token %}
+        <td> 
+               {{ requirement.student_typeID}} 
+        </td>
+        <td>
+            {{requirement.class_name}}
+        </td>
+        <td>
+            {{requirement.gender}}
+        </td>
+        <td>
+            {{ requirement.item_name }}
+        </td>
+        <td>
+             {{requirement.quantity_required}}
+         </td>
+
+        <td> 
+            {{ requirement.amount_required }}
+        </td>
+        
+
+    </tr>
+
+ 
+
+    {% endfor %}
+    </tbody>
+
+
+
+</table>
+
+
+</div>
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "main/base.html" %}
+
+{% load static %}
+{% load humanize %}
+
+<!--Anything under block content will be displayed  -->
+{% block content %}
+
+
+
+<div class="row">
+
+<h1>{{title}}</h1>
+<br>
+
+<p class="col-12">
+<form class="form-inline" method="POST" action="{% url 'main:client-list' %}">
+    {% csrf_token %}
+    <select   name="station-id" id="station">
+        <option  value="0">Choose Station</option>
+        {% for station in get_global_db_objects.stations %}
+            <option value="{{station.id}}">{{station.station_name}}</option>          
+        {% endfor %}
+    </select> &nbsp;
+    <button class="btn btn-sm btn-info text-white" type="submit">Load</button>
+</form>
+</p>
+<div class="col-12">
+    <div class="row">
+        <div class="col-12"><h1>{{station_name}}</h1></div> 
+
+        <div class="col-12"><button class="export-to-excel btn btn-sm btn-info text-white">Export To Excel</button></div>
+        
+    <table class="table table-striped table-bordered col-12" id="client-list">
+        <thead class="bg-info text-white">
+            <tr>
+                <td>Record Date</td> <td>Station</td> <td>Client Names</td>          
+                <td>Phone Contacts</td> <td>Balance</td>  
+                <td>Registered By</td> 
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in client_set %}
+            <tr>
+                <td> 
+                 
+                 <a href="{% url 'main:search-for-a-client' %}/{{client.id}}">
+                     {{ client.record_date  | date:'M d, Y' }}
+                 </a> 
+               </td>
+
+                <td>
+                    <a href="{% url 'main:search-for-a-client' %}/{{client.id}}">
+                      {{ client.stationID }}
+                    </a> 
+                </td>
+
+                <td> 
+                    <a href="{% url 'main:search-for-a-client' %}/{{client.id}}">
+                       {{ client.full_name  }}
+                    </a>
+                </td>
+
+                <td>
+                    <a href="{% url 'main:search-for-a-client' %}/{{client.id}}">
+                        {{  client.contact_numbers }} 
+                    </a> 
+                </td>
+                <td>  
+                    <a href="{% url 'main:search-for-a-client' %}/{{client.id}}">
+                        {{ client.current_total_balance | floatformat:1| intcomma  }} 
+                    </a> 
+                </td>
+                <td>
+                    <a href="{% url 'main:search-for-a-client' %}/{{client.id}}">
+                        {{client.userID}}
+                    </a>
+                </td>
+
+            </tr>
+            {% endfor %}
+
+
+        </tbody>
+        <tfoot  class="bg-dark text-white">
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td colspan="3">No of Clients: {{ no_of_clients }} | 
+                Total Balance: {{ total_debt | intcomma }}</td> 
+            </tr>
+        </tfoot>
+
+    </table>
+
+    </div>
+</div>
+
+</div>
+
+
+<script>
+    $(".export-to-excel").click(function(){
+       $("#client-list").table2excel({  
+    exclude: "",
+    name: "Worksheet Name",
+    filename: "ClientList.xls", // do include extension
+    preserveColors: true // set to true if you want background colors and font colors preserved
+})
+       
+
+});
+</script>
+
+
+{% endblock %}

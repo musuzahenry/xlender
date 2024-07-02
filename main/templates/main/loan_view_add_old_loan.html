@@ -1,0 +1,94 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+{% load humanize %}
+
+
+
+{% block content %}
+<!-- Open block content-->
+
+
+
+
+<div class="row">
+    <h2 style="padding-top: 3px;"class="col-12 col-md-12">Register Old Loan</h2>
+    <p class="col-12 col-md-12">(A loan is registered once)</p>
+
+<form  action="old-loan" class="col-md-12 col-12" method="POST" enctype="multipart/form-data">
+
+<div class="row">
+    {% csrf_token %}
+
+    <!--Hidden attributes-->
+    <input type="hidden" value="old-loan-edit" name="old-loan-edit">
+
+            <div class="col-12 col-md-12">
+              <div class="row">
+                    <div class="col-12 col-md-6">
+
+                        <label class="col-12" for="full-names">Client Full Names</label>
+                        <input class="col-12" type="text"  name="full-names" id="full-names" required>
+
+
+                        <label class="col-12" for="contacts">Phone Contacts</label>
+                        <input class="col-12" type="contacts"  name="contacts" id="contacts" required>
+                                              
+                        <label class="col-12" for="record-date">Loan Record Date</label>
+                        <input class="col-12" type="date"  name="record-date"   id="record-date" required>
+
+                        <label class="col-12" for="principle">Principle</label>
+                        <input class="col-12" type="number"  name="principle"   id="principle" required>
+
+                        <label class="col-12" for="loan-typeID">Loan Type </label>
+                        <select class="col-12"  name="loan-typeID" id="loan-typeID" required>
+                            <option  value="NA">--</option>
+                            {% for loan_type in get_global_db_objects.loan_types %}
+                                <option value="{{loan_type.id}}">{{loan_type.loan_type_name}}</option>          
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="col-12" for="total-fines">Current Total Fines</label>
+                        <input class="col-12" type="total-paid"  name="total-fines"   id="total-fines" required>
+
+                        <label class="col-12" for="current-balance">Current Balance </label>
+                        <input class="col-12" type="number"  name="current-balance" id="current-balance" required>
+
+
+                        <label class="col-12" for="total-paid">Total Previous Payments</label>
+                        <input class="col-12" type="total-paid"  name="total-paid"   id="total-paid" required>
+
+                         
+                        <table style="margin-bottom: 8px; margin-top: 8px;">
+                            <tr>
+                                <td colspan="2">Allow Automatic Monthly Fines</td>
+                            </tr>
+                        <tr><td>
+                           <input type="radio" value="no" name="count-status" id="dont-bypass" checked>
+                           <span style="font-size: 11px;">No</span> &nbsp;
+                        </td><td>
+                           <input type="radio" value="yes" name="count-status" id="bypass">
+                           <span style="font-size: 11px;">Yes</span>
+                        </td></tr>
+                        </table>
+                        <input class="btn btn-sm" type="submit" value="Submit">
+
+
+                    </div>
+
+
+
+                </div>  
+
+
+            </div>
+</div>
+</form>
+
+
+  </div>
+<!--Close block content-->
+{% endblock %}
+

@@ -1,0 +1,109 @@
+
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="row">
+    
+    <h2 style="padding-top: 3px; margin-top:4px;" class="col-12 col-md-4">
+    <a href="{% url 'main:guarantor-list' %}"
+    style="padding:3px;border:1px solid transparent; border-radius: 5px;" 
+    class="btn-success btn-sm text-white">
+        <i class="fa fa-arrow-left"></i>&nbsp;Back</a>
+        &nbsp;{{ request.session.current_client_fullname}}</h2>
+    <h3 style="padding-top: 3px;"class="col-12 col-md-8">LoanID: {{request.session.current_loanID}}</h3>
+
+    <h1 class="col-12"><span style="color:black;">{{guarantorID}}</span> Edit Guarantor Details</h1>
+
+    
+    <div class="col-12 col-md-4">
+    
+        <a href="{% url 'main:guarantor-image' %}">
+            <button class="btn-danger text-white">Set Guarantor Image</button>
+        </a>
+
+        <p style="text-align: center;">
+
+        <img style="width:90%; margin-top: 10px;" 
+        src="{% get_media_prefix %}{{guarantor_img}}" alt="Guarantor Image">
+ 
+        </p>
+        
+        <a style="font-size: 10px; text-decoration: underline;"
+        target="_blank" href="{% get_media_prefix %}{{guarantor_img}}">
+        <h3 style="width:200px;">{{image}}</h3></a>
+    </div>
+
+
+   <div class="col-12 col-md-8">
+    <form method="POST" class="row" enctype="multipart/form-data">
+
+        <input type="hidden" value="">
+        {% csrf_token %}
+    
+    <div class="col-12 col-md-6">
+      <div class="row">
+   
+        <input class="col-12" type="hidden"  name="edit-guarantor" Value="edit-guarantor">
+
+        <label class="col-12" for="surnane">Surnane</label>
+        <input class="col-12" type="text"  name="surnane" Value="{{surnane}}">   
+        <label class="col-12" for="first-name">First Name</label>
+        <input class="col-12" type="text"  name="first-name" Value="{{first_name}}">
+        <label class="col-12" for=" other_names">Other Names</label>
+        <input class="col-12" type="text"  name="other-names" Value="{{other_names}}">
+        <label class="col-12" for="national-identification-number">
+            National Identification Number
+        </label>
+        <input class="col-12" type="text"  name="national-identification-number" 
+        Value="{{national_identification_number}}">
+
+        <label class="col-12" for="gender">Gender</label>
+        <select class="col-12" value="{{gender}}" name="gender" required>
+            <option value="M" name="male">Male</option>
+            <option value="F" name="female">Female</option>
+        </select>
+    
+        <label class="col-12" for="date-of-birth">Date of Birth</label>
+        <input class="col-12" type="date" value="{{date_of_birth}}" name="date-of-birth">
+
+
+    
+    </div>
+</div>
+
+<div class="col-12 col-md-6">
+
+
+    <label class="col-12" for="physical-address">Physical Address</label>
+    <input class="col-12" type="text" value="{{physical_address}}" name="physical-address">
+    <label class="col-12" for="contact-numbers">Phone Contacts <i>(Coma seperated)</i></label>
+    <input class="col-12" type="text" value="{{contact_numbers}}" name="contact-numbers">
+
+
+    <label class="col-12" for="email-address">Email Address</label>
+    <input class="col-12" type="text" value="{{email_address}}" name="email-address">
+
+    <label class="col-12" for="occupation">Occupation</label>
+    <input class="col-12" type="text" value="{{occupation}}" name="occupation">
+
+     <br>
+    <input style="width:150px; margin-top: 3px;"class="col-12" type="Submit"  Value="Save">
+
+
+</div>
+
+
+
+
+
+</form>
+
+</div>
+
+
+</div>
+
+{% endblock %}
